@@ -1,40 +1,105 @@
-This is a Kotlin Multiplatform project targeting Android, Desktop (JVM).
+## 🚀 칸반 보드 생성(상품 목록)
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
 
-### Build and Run Android Application
+안드로이드 8기 레벨 1 미션, 칸반 보드 생성미션을 관리하는 프로젝트입니다.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## 진행 방식
+- 미션은 과제 진행 요구 사항, 기능 요구 사항, 프로그래밍 요구 사항 세 가지로 구성되어 있다. 
+- 세 개의 요구 사항을 만족하기 위해 노력한다. 특히 기능을 구현하기 전에 기능 목록을 만들고, 기능 단위로 커밋 하는 방식으로 진행한다.
+- 기능 요구 사항에 기재되지 않은 내용은 스스로 판단하여 구현한다.
 
-### Build and Run Desktop (JVM) Application
+## 과제 진행 요구 사항
+- 기능을 구현하기 전 README.md에 구현할 기능 목록을 정리해 추가한다.
+- Git의 커밋 단위는 앞 단계에서 README.md에 정리한 기능 목록 단위로 추가한다.
+- AngularJS Git Commit Message Conventions을 참고해 커밋 메시지를 작성한다.
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+## 기능 요구 사항
+[1단계]
+- 디자인 시안을 참고하여 새 태스크 생성 모달을 구현한다.
+- 필수 입력 란과 선택 입력 란을 구분한다.
+- 필수 입력: 제목, 상태, 담당자
+- 선택 입력: 설명, 태그
+- 상태와 담당자는 첫 번째 항목으로 기본 선택되어 있고, 한 항목만 선택 가능하다.
+- 유효성 검사가 실패하면 생성 버튼을 누를 수 없다.
 
----
+[2단계]
+> 칸반(Kanban)은 개발 단계를 거치면서 업무를 스케줄링하고 관리하는 시스템이다. 칸반은 이전 단계에서 일을 밀어 넣는 대신 다음 단계로 일을 끌어가는 것을 강조한다. 칸반은 업무를 시각화하고, 진행 중인 작업 수를 줄이고, 시스템을 통해 흐름을 극대화한다.
+from 책 「애자일 조직은 이렇게 일합니다」
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+- 디자인 시안을 참고하여 칸반 보드를 구현한다.
+- 새 태스크 생성 버튼에 모달을 연결한다.
+- 각 상태별 태스크 개수를 트래킹한다.
+  - 상태(To-Do, In Progress, Done)별 태스크 개수가 노출된다.
+  - 전체 할 일 중 완료된 일의 비율을 계산한다.
+  
+## 프로그래밍 요구 사항
+[1단계]
+- ViewModel, Hilt 등은 장바구니 미션에서 활용하지 않는다. 컴포즈 학습에 집중하자.
+- 컴포저블 함수가 너무 많은 일을 하지 않도록 분리하기 위해 노력해 본다.
+- 디자인 정합성을 맞추기 위한 너무 많은 노력을 기울이지 않아도 된다.
+- 1px 단위에 연연하지 말고, 폰트와 색상도 중요하지 않다.
+- 단위 테스트만으로도 충분한 로직과, UI 테스트가 필요한 영역을 구분한다.
+- 핵심 비즈니스 로직을 가지는 객체를 분리해 단위 테스트를 진행한다.
+- Compose UI Testing을 활용하여 기능 요구 사항을 테스트한다.
+
+[2단계]
+- Row와 Column, LazyRow와 LazyColumn 등 요구 사항에 적절한 컴포넌트를 선택한다.
+- 재사용 가능한 컴포넌트에 대해 고민해본다.
+- 적절한 테스트 방법을 활용하여 기능 요구 사항을 테스트한다.
+- 모든 요구 사항이 테스트 가능하진 않다. 스스로 판단해서 구분한다.
+- 특정 조건에 따라 Snackbar를 노출한다.
+
+## 가이드
+[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/design/3aBG3UfkTwmHM8BnPyahtT/8%EA%B8%B0-Android-%EB%A0%88%EB%B2%A81-%EB%AF%B8%EC%85%98-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=21642-2&t=xCxwxtFTp8FpfgFV-1)
+
+## 1단계 기능 구현 목록
+
+### TaskDialogTopAppBar() 구현
+- 제목과 닫기 버튼을 Row로 묶어서 구현한다.
+
+### TaskFieldLabel() 구현
+- Text() 를 사용한다.
+- isRequired 파라미터를 사용한다.
+  - isRequired에 따라서 "*"를 노출한다.
+
+### TaskDialogTextField() 구현
+- BasicTextField()를 사용한다.
+- isError 파라미터를 가진다.
+
+### TaskOptionCard() 구현
+- Box() 레이아웃을 사용한다.
+- content 파라미터를 뚫는다.
+
+### StatusOptionCard(), AssigneeOptionCard() 구현
+- TaskOptionCard()를 래핑하는 컴포넌트를 구현한다.
+- Text는 Text 정보만 표시한다.
+- Assignee는 작성자의 사진과 이름을 표시한다.
+
+### TaskDialogButton() 구현
+- Box() 레이아웃을 사용한다.
+- isEnabled 파라미터를 가진다.
+
+### TaskDialog() 구현
+- 여러 컴포넌트를 조합한 새 태스크 생성 다이얼로그를 구현한다.
+
+### KanbanTask를 활용한 유효성 검증 추가
+- 다이얼로그 내부에 있던 유효성 검사 로직을 도메인 모델로 이동시켜 도메인 규칙을 모은다.
+- 사용되는 정규식은 싱글톤으로 선언한다.
+
+### TaskDialog 리팩터링
+- 테스트 용이성을 위해 `TaskDialog`를 Stateful 컴포넌트와 Stateless 컴포넌트로 분리한다.
+
+### 단위 테스트 및 UI 테스트 작성
+- `KanbanTask`에 추가된 도메인 유효성 검증 로직(제목, 태그 형식 및 개수)에 대한 단위 테스트를 작성한다.
+- `TaskDialogContent`를 활용하여 필수 입력 누락 시 또는 태그 형식이 올바르지 않을 때 생성 버튼이 비활성화되는지 Compose UI Testing을 진행한다.
+
+## 2단계 기능 구현 목록
+
+- 칸반보드 탑바 구현
+    - 타이틀
+    - 완료율 / 상태 진행 바
+    - 태스크 생성 버튼
+- 칸반 카드 컬럼 구현
+- 칸반 보드 스크린 구현 (컴포넌트 조합)
+- 태스크 생성 버튼을 눌렀을 때 다이얼로그 띄우고, 다이얼로그의 생성 버튼을 눌렀을 때 칸반보드에 카드로 띄우는 기능
+- 새로운 테스크 추가 시 화면에 스낵바를 띄우는 기능
