@@ -1,56 +1,52 @@
-package woowacourse.kanban.board.ui.screen
+package woowacourse.kanban.board.ui.screen.board
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import woowacourse.kanban.board.domain.KanbanTask
+import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.dialog.TaskDialog
-import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.dialog.Status
 
 @Composable
-fun KanbanBoardScreen() {
-    val cards: MutableList<KanbanTask> = remember { mutableStateListOf() }
-    var isNewTaskDialog by remember { mutableStateOf(false) }
-    val snackBarHostState = remember { SnackbarHostState() }
+fun KanbanBoardScreen(
+    kanbanBoardState: KanbanBoardState = remember { KanbanBoardState() },
+) {
     val coroutineScope = rememberCoroutineScope()
+    val snackBarHostState = kanbanBoardState.snackBarHostState
 
-    val completeCount = cards.count { it.status == Status.DONE }
-    val totalCount = cards.size
+    val totalCount = kanbanBoardState.getTotalCount()
+    val completeCount = kanbanBoardState.getCompleteCount()
     val progress = if (totalCount == 0) 0f else completeCount.toFloat() / totalCount.toFloat()
     val progressPercent = (progress * 100).toInt()
 
     KanbanBoardContent(
-        cards = cards,
+        cards = kanbanBoardState.cards,
         completeCount = completeCount,
         totalCount = totalCount,
         progress = progress,
         progressPercent = progressPercent,
-        isNewTaskDialog = isNewTaskDialog,
+        isNewTaskDialog = kanbanBoardState.isNewTaskDialog,
         onNewTaskClick = {
-            isNewTaskDialog = true
+            kanbanBoardState.showNewTaskDialog()
         },
         onDismissClick = {
-            isNewTaskDialog = false
+            kanbanBoardState.hideNewTaskDialog()
         },
         snackHost = snackBarHostState,
         onCreateClick = {
-            cards.add(it)
-            isNewTaskDialog = false
+            kanbanBoardState.addCard(it)
+            kanbanBoardState.hideNewTaskDialog()
 
             coroutineScope.launch {
                 snackBarHostState.showSnackbar(

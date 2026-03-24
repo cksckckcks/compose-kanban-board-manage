@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
+import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
