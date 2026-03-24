@@ -16,34 +16,70 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import woowacourse.kanban.board.ui.component.card.KanbanCard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.ui.component.card.KanbanCard
 
 @Composable
 fun CardHolder(
     title: String,
-    titleBackgroundColor: Color,
+    mainColor: Color,
     bodyColor: Color,
     borderColor: Color,
     cards: List<KanbanTask>,
     modifier: Modifier = Modifier,
+    getIsDropTarget: () -> Boolean = { false },
+    onBoundsChanged: (Rect) -> Unit = { },
+    onTaskDragStart: (KanbanTask) -> Unit = { },
+    onTaskDragChange: (Offset) -> Unit = { },
+    onTaskDragEnd: () -> Unit = { },
+    onTaskDragCancel: () -> Unit = { },
 ) {
+    val isDropTarget by remember {
+        derivedStateOf {
+            getIsDropTarget()
+        }
+    }
+
+    val lastBoundsHolder = remember { mutableStateOf<Rect?>(null) }
+
     Column(
         modifier = modifier
-            .width(320.dp),
+            .width(320.dp)
+            .onGloballyPositioned {
+                val newBounds = it.boundsInWindow()
+                if (newBounds != lastBoundsHolder.value) {
+                    lastBoundsHolder.value = newBounds
+                    onBoundsChanged(newBounds)
+                }
+            }
+            .then(
+                if (isDropTarget)
+                    modifier
+                        .border(width = 2.dp, color = mainColor, RoundedCornerShape(12.dp))
+                else
+                    modifier,
+            ),
     ) {
         CardHolderTitle(
             text = title,
-            color = titleBackgroundColor,
+            color = mainColor,
             cardCount = cards.size,
         )
 
@@ -63,6 +99,10 @@ fun CardHolder(
                     crewName = card.assignee,
                     tags = card.tags,
                     description = card.description,
+                    onDragStart = { onTaskDragStart(card) },
+                    onDragChange = onTaskDragChange,
+                    onDragEnd = onTaskDragEnd,
+                    onDragCancel = onTaskDragCancel,
                 )
             }
         }
@@ -112,7 +152,7 @@ private fun CardHolderTitle(
 private fun CardHolderPreview() {
     CardHolder(
         title = "To Do",
-        titleBackgroundColor = Color(0xFF155DFC),
+        mainColor = Color(0xFF155DFC),
         bodyColor = Color(0xFFEFF6FF),
         borderColor = Color(0xFFBEDBFF),
         cards = listOf(

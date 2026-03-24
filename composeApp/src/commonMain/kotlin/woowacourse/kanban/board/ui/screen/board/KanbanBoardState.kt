@@ -14,6 +14,7 @@ class KanbanBoardState {
         private set
     val snackBarHostState = SnackbarHostState()
 
+
     fun addCard(card: KanbanTask) {
         cards.add(card)
     }

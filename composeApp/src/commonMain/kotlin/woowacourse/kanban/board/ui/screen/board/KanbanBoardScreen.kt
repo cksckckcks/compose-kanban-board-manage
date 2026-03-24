@@ -5,9 +5,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,6 +77,10 @@ private fun KanbanBoardContent(
     onDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
 ) {
+    // drag
+    var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
+    var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
+    val columnBounds = remember { mutableStateMapOf < Status, Rect>() }
 
     Scaffold(
         topBar = {
@@ -91,6 +101,36 @@ private fun KanbanBoardContent(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(24.dp),
+            getIsDropTarget = { status ->
+                currentDragPosition?.let { columnBounds[status]?.contains(it) == true } ?: false
+            },
+            onBoundsChanged = { rect, status ->
+                columnBounds[status] = rect
+            },
+            onTaskDragStart = { task ->
+                draggedTask = task
+            },
+            onTaskDragChange = { pos ->
+                currentDragPosition = pos
+            },
+            onTaskDragEnd = {
+                val dropPosition = currentDragPosition ?: return@CardGroup
+                val targetStatus = columnBounds.entries
+                    .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
+
+//                draggedTask?.let { task ->
+//                    if (targetStatus != null && task.status != targetStatus) {
+//                        val idx = tasks.indexOfFirst { it.id == task.id }
+//                        if (idx != -1) tasks[idx] = tasks[idx].copy(status = targetStatus)
+//                    }
+//                }
+                currentDragPosition = null
+                draggedTask = null
+            },
+            onTaskDragCancel = {
+                currentDragPosition = null
+                draggedTask = null
+            },
         )
 
         if (isNewTaskDialog) {

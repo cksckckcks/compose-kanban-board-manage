@@ -16,7 +16,7 @@ class CardHolderTest {
         setContent {
             CardHolder(
                 title = "To Do",
-                titleBackgroundColor = Color(0xFF155DFC),
+                mainColor = Color(0xFF155DFC),
                 bodyColor = Color(0xFFEFF6FF),
                 borderColor = Color(0xFFBEDBFF),
                 cards = listOf(

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import woowacourse.kanban.board.domain.KanbanTask
@@ -13,20 +15,30 @@ import woowacourse.kanban.board.domain.dialog.Status
 fun CardGroup(
     cards: List<KanbanTask>,
     modifier: Modifier = Modifier,
+    getIsDropTarget: (Status) -> Boolean = { false },
+    onBoundsChanged: (Rect, Status) -> Unit = { _, _ -> },
+    onTaskDragStart: (KanbanTask) -> Unit = { },
+    onTaskDragChange: (Offset) -> Unit = { },
+    onTaskDragEnd: () -> Unit = { },
+    onTaskDragCancel: () -> Unit = { },
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Status.entries.forEach { status ->
-            val kanbanBoardInfo = status.toKanbanBoardInfo()
-
             CardHolder(
-                title = kanbanBoardInfo.title,
-                bodyColor = kanbanBoardInfo.bodyColor,
-                borderColor = kanbanBoardInfo.borderColor,
-                titleBackgroundColor = kanbanBoardInfo.titleBackgroundColor,
+                title = status.toTitle(),
+                bodyColor = status.toBodyColor(),
+                borderColor = status.toBorderColor(),
+                mainColor = status.toMainColor(),
                 cards = cards.filter { card -> card.status == status },
+                getIsDropTarget = { getIsDropTarget(status) },
+                onBoundsChanged = { onBoundsChanged(it, status) },
+                onTaskDragStart = onTaskDragStart,
+                onTaskDragChange = onTaskDragChange,
+                onTaskDragEnd = onTaskDragEnd,
+                onTaskDragCancel = onTaskDragCancel,
             )
         }
     }
