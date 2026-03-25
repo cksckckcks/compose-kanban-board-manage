@@ -5,18 +5,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 
-class KanbanBoardState {
-    val cards: MutableList<KanbanTask> = mutableStateListOf()
+class KanbanBoardState(
+    val kanbanBoard: KanbanBoard,
+) {
+    var tasks = mutableStateListOf<KanbanTask>()
+
     var isNewTaskDialog by mutableStateOf(false)
         private set
     val snackBarHostState = SnackbarHostState()
 
+    fun updateTasks() {
+        tasks.clear()
+        tasks.addAll(kanbanBoard.getTasks())
+    }
 
-    fun addCard(card: KanbanTask) {
-        cards.add(card)
+    fun addTask(kanbanTaskInfo: KanbanTaskInfo) {
+        kanbanBoard.createTask(kanbanTaskInfo)
+        updateTasks()
     }
 
     fun showNewTaskDialog() {
@@ -27,6 +37,6 @@ class KanbanBoardState {
         isNewTaskDialog = false
     }
 
-    fun getCompleteCount(): Int = cards.count { it.status == Status.DONE }
-    fun getTotalCount(): Int = cards.size
+    fun getCompleteCount(): Int = tasks.count { it.status == Status.DONE }
+    fun getTotalCount(): Int = tasks.size
 }

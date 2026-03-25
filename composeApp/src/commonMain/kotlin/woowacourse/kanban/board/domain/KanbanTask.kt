@@ -3,6 +3,7 @@ package woowacourse.kanban.board.domain
 import woowacourse.kanban.board.domain.dialog.Status
 
 data class KanbanTask(
+    val id: Long,
     val title: String,
     val status: Status,
     val assignee: String,

@@ -18,15 +18,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
+import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 import woowacourse.kanban.board.ui.component.dialog.TaskDialog
 
 @Composable
 fun KanbanBoardScreen(
-    kanbanBoardState: KanbanBoardState = remember { KanbanBoardState() },
+    kanbanBoardState: KanbanBoardState = remember { KanbanBoardState(KanbanBoard(title = "Compose Desktop 칸반 보드")) },
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = kanbanBoardState.snackBarHostState
@@ -37,7 +39,7 @@ fun KanbanBoardScreen(
     val progressPercent = (progress * 100).toInt()
 
     KanbanBoardContent(
-        cards = kanbanBoardState.cards,
+        cards = kanbanBoardState.tasks,
         completeCount = completeCount,
         totalCount = totalCount,
         progress = progress,
@@ -51,7 +53,7 @@ fun KanbanBoardScreen(
         },
         snackHost = snackBarHostState,
         onCreateClick = {
-            kanbanBoardState.addCard(it)
+            kanbanBoardState.addTask(it)
             kanbanBoardState.hideNewTaskDialog()
 
             coroutineScope.launch {
@@ -75,12 +77,12 @@ private fun KanbanBoardContent(
     snackHost: SnackbarHostState,
     onNewTaskClick: () -> Unit,
     onDismissClick: () -> Unit,
-    onCreateClick: (KanbanTask) -> Unit,
+    onCreateClick: (KanbanTaskInfo) -> Unit,
 ) {
     // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
-    val columnBounds = remember { mutableStateMapOf < Status, Rect>() }
+    val columnBounds = remember { mutableStateMapOf<Status, Rect>() }
 
     Scaffold(
         topBar = {
@@ -118,12 +120,6 @@ private fun KanbanBoardContent(
                 val targetStatus = columnBounds.entries
                     .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
 
-//                draggedTask?.let { task ->
-//                    if (targetStatus != null && task.status != targetStatus) {
-//                        val idx = tasks.indexOfFirst { it.id == task.id }
-//                        if (idx != -1) tasks[idx] = tasks[idx].copy(status = targetStatus)
-//                    }
-//                }
                 currentDragPosition = null
                 draggedTask = null
             },
@@ -148,6 +144,7 @@ private fun KanbanBoardContentPreview() {
     KanbanBoardContent(
         cards = listOf(
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -155,6 +152,7 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -162,6 +160,7 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -169,6 +168,7 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -176,6 +176,7 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -183,6 +184,7 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),

@@ -15,6 +15,7 @@ class KanbanCardTest {
     fun `모든 정보가 있는 경우 - 제목, 설명, 태그, 담당자가 모두 노출된다`() = runComposeUiTest {
         // Given
         val task = KanbanTask(
+            id = 0,
             title = "새로운 기능 구현",
             description = "이 기능은 매우 중요합니다.",
             tags = listOf("긴급", "백엔드"),
@@ -44,6 +45,7 @@ class KanbanCardTest {
     fun `설명이 없는 경우 - 설명 영역이 노출되지 않는다`() = runComposeUiTest {
         // Given
         val task = KanbanTask(
+            id = 0,
             title = "새로운 기능 구현",
             description = null,
             tags = listOf("긴급"),
@@ -71,6 +73,7 @@ class KanbanCardTest {
     fun `태그가 없는 경우 - 태그 영역이 노출되지 않는다`() = runComposeUiTest {
         // Given
         val task = KanbanTask(
+            id = 0,
             title = "새로운 기능 구현",
             description = "설명입니다.",
             tags = emptyList(),

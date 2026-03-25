@@ -16,6 +16,7 @@ class KanbanTaskTest {
 
         // When
         val task = KanbanTask(
+            id = 0,
             title = title,
             description = description,
             tags = tags,
@@ -38,6 +39,7 @@ class KanbanTaskTest {
         // When & Then
         val exception = assertFailsWith<IllegalArgumentException> {
             KanbanTask(
+                id = 0,
                 title = emptyTitle,
                 status = Status.TO_DO,
                 assignee = "아키",
@@ -54,6 +56,7 @@ class KanbanTaskTest {
         // When & Then
         val exception = assertFailsWith<IllegalArgumentException> {
             KanbanTask(
+                id = 0,
                 title = blankTitle,
                 status = Status.TO_DO,
                 assignee = "아키",
@@ -70,6 +73,7 @@ class KanbanTaskTest {
         // When & Then
         val exception = assertFailsWith<IllegalArgumentException> {
             KanbanTask(
+                id = 0,
                 title = "제목",
                 status = Status.TO_DO,
                 assignee = "아키",
@@ -87,6 +91,7 @@ class KanbanTaskTest {
         // When & Then
         val exception = assertFailsWith<IllegalArgumentException> {
             KanbanTask(
+                id = 0,
                 title = "제목",
                 status = Status.TO_DO,
                 assignee = "아키",

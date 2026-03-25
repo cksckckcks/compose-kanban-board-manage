@@ -50,6 +50,7 @@ private fun CardGroupPreview() {
     CardGroup(
         cards = listOf(
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -57,6 +58,7 @@ private fun CardGroupPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -64,6 +66,7 @@ private fun CardGroupPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -71,6 +74,7 @@ private fun CardGroupPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -78,6 +82,7 @@ private fun CardGroupPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -85,6 +90,7 @@ private fun CardGroupPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
+                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
