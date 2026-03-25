@@ -93,7 +93,10 @@ fun CardHolder(
                 .padding(vertical = 16.dp, horizontal = 17.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(items = cards) { card ->
+            items(
+                items = cards,
+                key = { it.id }
+            ) { card ->
                 KanbanCard(
                     title = card.title,
                     crewName = card.assignee,

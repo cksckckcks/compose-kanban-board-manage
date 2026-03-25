@@ -63,6 +63,9 @@ fun KanbanBoardScreen(
                 )
             }
         },
+        onMoveTask = { task, targetStatus ->
+            kanbanBoardState.moveTask(task, targetStatus)
+        }
     )
 }
 
@@ -78,11 +81,12 @@ private fun KanbanBoardContent(
     onNewTaskClick: () -> Unit,
     onDismissClick: () -> Unit,
     onCreateClick: (KanbanTaskInfo) -> Unit,
+    onMoveTask: (KanbanTask, Status) -> Unit,
 ) {
     // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
-    val columnBounds = remember { mutableStateMapOf<Status, Rect>() }
+    val columnBounds = remember { mutableStateMapOf < Status, Rect>() }
 
     Scaffold(
         topBar = {
@@ -120,6 +124,9 @@ private fun KanbanBoardContent(
                 val targetStatus = columnBounds.entries
                     .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
 
+                draggedTask?.let { task ->
+                    onMoveTask(task, targetStatus ?: return@let)
+                }
                 currentDragPosition = null
                 draggedTask = null
             },
@@ -201,5 +208,6 @@ private fun KanbanBoardContentPreview() {
         onCreateClick = { },
         snackHost = SnackbarHostState(),
         onDismissClick = { },
+        onMoveTask = { _, _ -> }
     )
 }

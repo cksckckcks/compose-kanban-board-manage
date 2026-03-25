@@ -3,10 +3,13 @@ package woowacourse.kanban.board.domain
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 
-class KanbanBoard(val title: String) {
+class KanbanBoard(
+    val title: String,
+    private val tasks: MutableList<KanbanTask> = mutableListOf<KanbanTask>()
+) {
     private var kanbanTaskId = 0L
-    private val _tasks = mutableListOf<KanbanTask>()
-    fun getTasks(): List<KanbanTask> = _tasks
+
+    fun getTasks(): List<KanbanTask> = tasks
 
     fun createTask(taskInfo: KanbanTaskInfo) {
         val task = KanbanTask(
@@ -18,15 +21,18 @@ class KanbanBoard(val title: String) {
             tags = taskInfo.tags,
         )
 
-        _tasks.add(task)
+        tasks.add(task)
     }
 
     fun changeTaskStatus(task: KanbanTask, targetStatus: Status) {
-        val newTask = task.copy(
-            status = targetStatus,
-        )
+        if (task.status != targetStatus) {
+            val index = tasks.indexOfFirst { it.id == task.id }
 
-        _tasks.remove(task)
-        _tasks.add(newTask)
+            if (index != -1) {
+                tasks[index] = tasks[index].copy(
+                    status = targetStatus,
+                )
+            }
+        }
     }
 }

@@ -29,6 +29,11 @@ class KanbanBoardState(
         updateTasks()
     }
 
+    fun moveTask(task: KanbanTask, targetStatus: Status) {
+        kanbanBoard.changeTaskStatus(task, targetStatus)
+        updateTasks()
+    }
+
     fun showNewTaskDialog() {
         isNewTaskDialog = true
     }
