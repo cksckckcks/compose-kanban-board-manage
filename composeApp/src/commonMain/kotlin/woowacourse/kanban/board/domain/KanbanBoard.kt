@@ -11,14 +11,10 @@ class KanbanBoard(
         tasks.add(task)
     }
 
-    fun changeTaskStatus(task: KanbanTask, targetStatus: Status) {
-        val index = tasks.indexOfFirst { it.id == task.id }
+    fun changeTaskStatus(task: KanbanTask, newStatus: Status) {
+        val newTask = task.changeStatus(newStatus = newStatus)
 
-        if (index != -1) {
-            tasks[index] = tasks[index].copy(
-                status = targetStatus,
-            )
-        }
-
+        tasks.remove(task)
+        tasks.add(newTask)
     }
 }
