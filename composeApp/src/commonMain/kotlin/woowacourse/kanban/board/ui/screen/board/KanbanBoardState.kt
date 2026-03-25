@@ -42,7 +42,10 @@ class KanbanBoardState(
         updateTasks()
     }
 
-    fun moveTask(task: KanbanTask, targetStatus: Status) {
+    fun moveTask(
+        task: KanbanTask,
+        targetStatus: Status,
+    ) {
         kanbanBoard.changeTaskStatus(task, targetStatus)
         updateTasks()
     }

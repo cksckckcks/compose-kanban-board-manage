@@ -12,8 +12,8 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import woowacourse.kanban.board.domain.KanbanProject
-import kotlin.test.Test
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
+import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {
@@ -21,7 +21,7 @@ class KanbanBoardScreenTest {
     fun `칸반보드 스크린의 카드홀더들이 정상적으로 화면에 표시된다`() = runComposeUiTest {
         setContent {
             KanbanBoardScreen(
-                projects = listOf(KanbanProject("안녕"))
+                projects = listOf(KanbanProject("안녕")),
             )
         }
 
@@ -34,7 +34,7 @@ class KanbanBoardScreenTest {
     fun `새 태스크 버튼을 누르면 다이얼로그가 표시된다`() = runComposeUiTest {
         setContent {
             KanbanBoardScreen(
-                projects = listOf(KanbanProject("안녕"))
+                projects = listOf(KanbanProject("안녕")),
             )
         }
 
@@ -47,7 +47,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("안녕"))
+                    projects = listOf(KanbanProject("안녕")),
                 )
             }
         }
@@ -64,7 +64,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("안녕"))
+                    projects = listOf(KanbanProject("안녕")),
                 )
             }
         }
@@ -81,7 +81,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("잘가"))
+                    projects = listOf(KanbanProject("잘가")),
                 )
             }
         }
@@ -113,7 +113,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("잘가"))
+                    projects = listOf(KanbanProject("잘가")),
                 )
             }
         }
