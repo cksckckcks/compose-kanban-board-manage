@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 fun TitleButtonGroup(
     titles: List<String>,
     selectedIndex: Int,
+    onTitleClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -22,6 +23,7 @@ fun TitleButtonGroup(
             TitleButton(
                 text = title,
                 isSelected = index == selectedIndex,
+                onClick = { onTitleClick(index) },
             )
         }
     }
@@ -33,6 +35,7 @@ fun TitleButtonGroupPreview() {
     TitleButtonGroup(
         titles = listOf("Compose1", "Compose2", "compose3너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무너무"),
         selectedIndex = 0,
-        modifier = Modifier.width(200.dp)
+        onTitleClick = { },
+        modifier = Modifier.width(200.dp),
     )
 }

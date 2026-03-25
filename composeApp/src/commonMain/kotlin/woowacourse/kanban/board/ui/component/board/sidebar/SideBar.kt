@@ -17,6 +17,7 @@ fun SideBar(
     subTitle: String,
     titles: List<String>,
     selectedIndex: Int,
+    onTitleClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -25,8 +26,15 @@ fun SideBar(
             .fillMaxHeight(),
     ) {
         Header(title = title, subTitle = subTitle)
+
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
-        TitleButtonGroup(titles = titles, selectedIndex = selectedIndex, modifier = Modifier.padding(16.dp))
+
+        TitleButtonGroup(
+            titles = titles,
+            selectedIndex = selectedIndex,
+            onTitleClick = onTitleClick,
+            modifier = Modifier.padding(16.dp),
+        )
     }
 }
 
@@ -38,5 +46,6 @@ private fun SideBarPreview() {
         subTitle = "4주차 미션 보드",
         titles = listOf("Compose1", "Compose2", "compose3너무너무너무너무너무너무"),
         selectedIndex = 0,
+        onTitleClick = { },
     )
 }

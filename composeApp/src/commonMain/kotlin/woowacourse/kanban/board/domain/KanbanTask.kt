@@ -16,7 +16,7 @@ data class KanbanTask(
         require(isTagFormatValid(tags)) { "태그의 길이는 1에서 5자로 설정해야됩니다." }
     }
 
-    fun changeStatus(newStatus: Status) = copy(id = id, status = newStatus)
+    fun changeStatus(newStatus: Status) = copy(status = newStatus)
 
     companion object {
         private var idIndex = 0L

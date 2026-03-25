@@ -1,6 +1,7 @@
 package woowacourse.kanban.board.ui.component.board.sidebar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,8 @@ import androidx.compose.ui.unit.sp
 fun TitleButton(
     text: String,
     isSelected: Boolean,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
@@ -29,6 +31,7 @@ fun TitleButton(
             .shadow(elevation = if (isSelected) 1.dp else 0.dp, shape = RoundedCornerShape(10.dp))
             .clip(shape = RoundedCornerShape(10.dp))
             .background(color = if (isSelected) Color(0xFFEEF2FF) else Color.Unspecified)
+            .clickable(onClick = onClick)
             .padding(start = 15.dp, end = 41.dp, top = 12.dp, bottom = 12.dp),
     ) {
         Text(
@@ -50,7 +53,8 @@ private fun SelectedTitleButtonPreview() {
     TitleButton(
         text = "Compose1",
         isSelected = true,
-        modifier = Modifier.padding(5.dp)
+        onClick = { },
+        modifier = Modifier.padding(5.dp),
     )
 }
 
@@ -59,6 +63,7 @@ private fun SelectedTitleButtonPreview() {
 private fun UnSelectedTitleButtonPreview() {
     TitleButton(
         text = "Compose1",
-        isSelected = false
+        onClick = { },
+        isSelected = false,
     )
 }

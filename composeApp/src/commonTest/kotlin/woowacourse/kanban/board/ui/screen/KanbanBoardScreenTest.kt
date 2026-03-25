@@ -4,25 +4,25 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
-import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
+import woowacourse.kanban.board.domain.KanbanProject
 import kotlin.test.Test
+import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {
     @Test
     fun `칸반보드 스크린의 카드홀더들이 정상적으로 화면에 표시된다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen()
+            KanbanBoardScreen(
+                projects = listOf(KanbanProject("안녕"))
+            )
         }
 
         onNodeWithText("To Do").assertIsDisplayed()
@@ -33,7 +33,9 @@ class KanbanBoardScreenTest {
     @Test
     fun `새 태스크 버튼을 누르면 다이얼로그가 표시된다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen()
+            KanbanBoardScreen(
+                projects = listOf(KanbanProject("안녕"))
+            )
         }
 
         onNodeWithText("새 태스크 생성").performClick()
@@ -44,7 +46,9 @@ class KanbanBoardScreenTest {
     fun `태스크를 생성했을 때 칸반보드에 카드가 정상적으로 표시된다`() = runComposeUiTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
-                KanbanBoardScreen()
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("안녕"))
+                )
             }
         }
 
@@ -59,7 +63,9 @@ class KanbanBoardScreenTest {
     fun `태스크를 생성했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
-                KanbanBoardScreen()
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("안녕"))
+                )
             }
         }
 
@@ -74,7 +80,9 @@ class KanbanBoardScreenTest {
         // Given
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
-                KanbanBoardScreen()
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("잘가"))
+                )
             }
         }
         onNodeWithText("새 태스크 생성").performClick()
@@ -83,7 +91,6 @@ class KanbanBoardScreenTest {
         onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
         onNodeWithContentDescription("닫기").performClick()
 
-
         // When
         onNodeWithText("안녕하세요").performTouchInput {
             down(center)
@@ -91,7 +98,7 @@ class KanbanBoardScreenTest {
                 position = onNodeWithText("Done")
                     .fetchSemanticsNode()
                     .boundsInRoot
-                    .center
+                    .center,
             )
             up()
         }
@@ -100,13 +107,14 @@ class KanbanBoardScreenTest {
         onNodeWithText("태스크가 이동되었습니다.").assertIsDisplayed()
     }
 
-
     @Test
     fun `태스크를 같은 상태로 이동했을 때 스낵바가 표시되지 않는다`() = runComposeUiTest {
         // Given
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
-                KanbanBoardScreen()
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("잘가"))
+                )
             }
         }
         onNodeWithText("새 태스크 생성").performClick()
@@ -122,7 +130,7 @@ class KanbanBoardScreenTest {
                 position = onNodeWithText("To Do")
                     .fetchSemanticsNode()
                     .boundsInRoot
-                    .center
+                    .center,
             )
             up()
         }

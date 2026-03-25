@@ -1,10 +1,14 @@
 package woowacourse.kanban.board.ui.screen.board
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -20,16 +24,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import woowacourse.kanban.board.domain.KanbanBoard
+import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
+import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
 import woowacourse.kanban.board.ui.component.dialog.TaskDialog
 
 @Composable
 fun KanbanBoardScreen(
-    kanbanBoardState: KanbanBoardState = remember { KanbanBoardState(KanbanBoard()) },
+    projects: List<KanbanProject>,
 ) {
+    val kanbanBoardState = remember {
+        KanbanBoardState(
+            kanbanBoard = KanbanBoard(),
+            projects = projects,
+        )
+    }
+
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = kanbanBoardState.snackBarHostState
 
@@ -39,6 +52,8 @@ fun KanbanBoardScreen(
     val progressPercent = (progress * 100).toInt()
 
     KanbanBoardContent(
+        projectTitles = kanbanBoardState.getProjectsTitles(),
+        projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
         cards = kanbanBoardState.tasks,
         completeCount = completeCount,
         totalCount = totalCount,
@@ -63,6 +78,7 @@ fun KanbanBoardScreen(
                 )
             }
         },
+        updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             kanbanBoardState.moveTask(task, targetStatus)
 
@@ -79,6 +95,8 @@ fun KanbanBoardScreen(
 
 @Composable
 private fun KanbanBoardContent(
+    projectTitles: List<String>,
+    projectSelectedIndex: Int,
     cards: List<KanbanTask>,
     completeCount: Int,
     totalCount: Int,
@@ -90,6 +108,7 @@ private fun KanbanBoardContent(
     onDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
+    updateSelectedProjectIndex: (Int) -> Unit,
 ) {
     // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
@@ -97,60 +116,75 @@ private fun KanbanBoardContent(
     val columnBounds = remember { mutableStateMapOf<Status, Rect>() }
 
     Scaffold(
-        topBar = {
-            KanbanBoardTopAppBar(
-                title = "Compose Desktop 칸반 보드",
-                progress = progress,
-                progressPercent = progressPercent,
-                completeCount = completeCount,
-                totalCount = totalCount,
-                onNewTaskClick = onNewTaskClick,
-            )
-        },
         snackbarHost = { SnackbarHost(hostState = snackHost) },
         containerColor = Color.White,
     ) { innerPadding ->
-        CardGroup(
-            cards = cards,
+
+        Row(
             modifier = Modifier
-                .padding(innerPadding)
-                .padding(24.dp),
-            getIsDropTarget = { status ->
-                currentDragPosition?.let { columnBounds[status]?.contains(it) == true } ?: false
-            },
-            onBoundsChanged = { rect, status ->
-                columnBounds[status] = rect
-            },
-            onTaskDragStart = { task ->
-                draggedTask = task
-            },
-            onTaskDragChange = { pos ->
-                currentDragPosition = pos
-            },
-            onTaskDragEnd = {
-                val dropPosition = currentDragPosition ?: return@CardGroup
-                val targetStatus = columnBounds.entries
-                    .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
-
-                draggedTask?.let { task ->
-                    if (task.status != targetStatus) {
-                        onMoveTask(task, targetStatus ?: return@let)
-                    }
-                }
-                currentDragPosition = null
-                draggedTask = null
-            },
-            onTaskDragCancel = {
-                currentDragPosition = null
-                draggedTask = null
-            },
-        )
-
-        if (isNewTaskDialog) {
-            TaskDialog(
-                onDismissClick = onDismissClick,
-                onCreateClick = onCreateClick,
+                .padding(innerPadding),
+        ) {
+            SideBar(
+                title = "프로젝트",
+                subTitle = "4주차 미션 보드",
+                titles = projectTitles,
+                selectedIndex = projectSelectedIndex,
+                onTitleClick = updateSelectedProjectIndex,
             )
+
+            VerticalDivider(modifier = Modifier.fillMaxHeight())
+
+            Column {
+                KanbanBoardTopAppBar(
+                    title = "Compose Desktop 칸반 보드",
+                    progress = progress,
+                    progressPercent = progressPercent,
+                    completeCount = completeCount,
+                    totalCount = totalCount,
+                    onNewTaskClick = onNewTaskClick,
+                )
+
+                CardGroup(
+                    cards = cards,
+                    modifier = Modifier
+                        .padding(24.dp),
+                    getIsDropTarget = { status ->
+                        currentDragPosition?.let { columnBounds[status]?.contains(it) == true } ?: false
+                    },
+                    onBoundsChanged = { rect, status ->
+                        columnBounds[status] = rect
+                    },
+                    onTaskDragStart = { task ->
+                        draggedTask = task
+                    },
+                    onTaskDragChange = { pos ->
+                        currentDragPosition = pos
+                    },
+                    onTaskDragEnd = {
+                        val dropPosition = currentDragPosition ?: return@CardGroup
+                        val targetStatus = columnBounds.entries
+                            .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
+
+                        draggedTask?.let { task ->
+                            if (task.status != targetStatus) {
+                                onMoveTask(task, targetStatus ?: return@let)
+                            }
+                        }
+                        currentDragPosition = null
+                        draggedTask = null
+                    },
+                    onTaskDragCancel = {
+                        currentDragPosition = null
+                        draggedTask = null
+                    },
+                )
+            }
+            if (isNewTaskDialog) {
+                TaskDialog(
+                    onDismissClick = onDismissClick,
+                    onCreateClick = onCreateClick,
+                )
+            }
         }
     }
 }
@@ -159,6 +193,8 @@ private fun KanbanBoardContent(
 @Composable
 private fun KanbanBoardContentPreview() {
     KanbanBoardContent(
+        projectTitles = listOf("1", "2"),
+        projectSelectedIndex = 0,
         cards = listOf(
             KanbanTask(
                 title = "LazyColumn 컴포넌트 구현",
@@ -212,6 +248,7 @@ private fun KanbanBoardContentPreview() {
         onCreateClick = { },
         snackHost = SnackbarHostState(),
         onDismissClick = { },
+        updateSelectedProjectIndex = { },
         onMoveTask = { _, _ -> },
     )
 }
