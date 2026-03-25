@@ -33,7 +33,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 import woowacourse.kanban.board.ui.component.dialog.component.AssigneeOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.StatusOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogCancelButton
@@ -44,7 +43,7 @@ import woowacourse.kanban.board.ui.component.dialog.component.TaskFieldLabel
 
 @Composable
 fun TaskDialog(
-    onCreateClick: (KanbanTaskInfo) -> Unit,
+    onCreateClick: (KanbanTask) -> Unit,
     onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -119,7 +118,7 @@ fun TaskDialog(
             onDismissClick = onDismissClick,
             onCreateClick = {
                 onCreateClick(
-                    KanbanTaskInfo(
+                    KanbanTask(
                         title = titleValue,
                         description = descriptionValue.takeIf { it.isNotBlank() },
                         tags = if (tagValue.isEmpty()) emptyList() else tags,

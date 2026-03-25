@@ -113,7 +113,6 @@ private fun KanbanCardTags(tags: List<String>) {
 private class KanbanCardPreviewParameterProvider : PreviewParameterProvider<KanbanTask> {
     override val values = sequenceOf(
         KanbanTask(
-            id = 0,
             title = "너무너무 긴 제목은 한 줄까지만 노출합니다",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능", "긴 태그", "최대로", "5자까지"),
@@ -121,7 +120,6 @@ private class KanbanCardPreviewParameterProvider : PreviewParameterProvider<Kanb
             assignee = "아키".repeat(10),
         ),
         KanbanTask(
-            id = 0,
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능"),
@@ -129,21 +127,18 @@ private class KanbanCardPreviewParameterProvider : PreviewParameterProvider<Kanb
             assignee = "아키",
         ),
         KanbanTask(
-            id = 0,
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             status = Status.TO_DO,
             assignee = "아키",
         ),
         KanbanTask(
-            id = 0,
             title = "LazyColumn 컴포넌트 구현",
             tags = listOf("컴포넌트", "성능"),
             status = Status.TO_DO,
             assignee = "아키",
         ),
         KanbanTask(
-            id = 0,
             title = "LazyColumn 컴포넌트 구현",
             status = Status.TO_DO,
             assignee = "아키",

@@ -24,12 +24,11 @@ import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
-import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 import woowacourse.kanban.board.ui.component.dialog.TaskDialog
 
 @Composable
 fun KanbanBoardScreen(
-    kanbanBoardState: KanbanBoardState = remember { KanbanBoardState(KanbanBoard(title = "Compose Desktop 칸반 보드")) },
+    kanbanBoardState: KanbanBoardState = remember { KanbanBoardState(KanbanBoard()) },
 ) {
     val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = kanbanBoardState.snackBarHostState
@@ -89,7 +88,7 @@ private fun KanbanBoardContent(
     snackHost: SnackbarHostState,
     onNewTaskClick: () -> Unit,
     onDismissClick: () -> Unit,
-    onCreateClick: (KanbanTaskInfo) -> Unit,
+    onCreateClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
 ) {
     // drag
@@ -162,7 +161,6 @@ private fun KanbanBoardContentPreview() {
     KanbanBoardContent(
         cards = listOf(
             KanbanTask(
-                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -170,7 +168,6 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
-                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -178,7 +175,6 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
-                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -186,7 +182,6 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
-                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -194,7 +189,6 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
-                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),
@@ -202,7 +196,6 @@ private fun KanbanBoardContentPreview() {
                 assignee = "다이노",
             ),
             KanbanTask(
-                id = 0,
                 title = "LazyColumn 컴포넌트 구현",
                 description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
                 tags = listOf("컴포넌트", "성능"),

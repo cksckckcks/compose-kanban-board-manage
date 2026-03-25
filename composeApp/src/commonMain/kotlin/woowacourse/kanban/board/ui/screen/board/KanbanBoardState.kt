@@ -8,7 +8,6 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 
 class KanbanBoardState(
     val kanbanBoard: KanbanBoard,
@@ -24,8 +23,8 @@ class KanbanBoardState(
         tasks.addAll(kanbanBoard.getTasks())
     }
 
-    fun addTask(kanbanTaskInfo: KanbanTaskInfo) {
-        kanbanBoard.createTask(kanbanTaskInfo)
+    fun addTask(kanbanTask: KanbanTask) {
+        kanbanBoard.createTask(kanbanTask)
         updateTasks()
     }
 
