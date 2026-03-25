@@ -4,9 +4,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
@@ -62,5 +67,67 @@ class KanbanBoardScreenTest {
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
         onNodeWithText("생성").performClick()
         onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
+    }
+
+    @Test
+    fun `태스크를 이동했을 때 스낵바가 정상적으로 표시된다`() = runComposeUiTest {
+        // Given
+        setContent {
+            CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
+                KanbanBoardScreen()
+            }
+        }
+        onNodeWithText("새 태스크 생성").performClick()
+        onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
+        onNodeWithText("생성").performClick()
+        onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
+        onNodeWithContentDescription("닫기").performClick()
+
+
+        // When
+        onNodeWithText("안녕하세요").performTouchInput {
+            down(center)
+            moveTo(
+                position = onNodeWithText("Done")
+                    .fetchSemanticsNode()
+                    .boundsInRoot
+                    .center
+            )
+            up()
+        }
+
+        // Then
+        onNodeWithText("태스크가 이동되었습니다.").assertIsDisplayed()
+    }
+
+
+    @Test
+    fun `태스크를 같은 상태로 이동했을 때 스낵바가 표시되지 않는다`() = runComposeUiTest {
+        // Given
+        setContent {
+            CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
+                KanbanBoardScreen()
+            }
+        }
+        onNodeWithText("새 태스크 생성").performClick()
+        onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
+        onNodeWithText("생성").performClick()
+        onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
+        onNodeWithContentDescription("닫기").performClick()
+
+        // When
+        onNodeWithText("안녕하세요").performTouchInput {
+            down(center)
+            moveTo(
+                position = onNodeWithText("To Do")
+                    .fetchSemanticsNode()
+                    .boundsInRoot
+                    .center
+            )
+            up()
+        }
+
+        // Then
+        onNodeWithText("태스크가 이동되었습니다.").assertDoesNotExist()
     }
 }

@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui.screen.board
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -65,7 +66,15 @@ fun KanbanBoardScreen(
         },
         onMoveTask = { task, targetStatus ->
             kanbanBoardState.moveTask(task, targetStatus)
-        }
+
+            coroutineScope.launch {
+                snackBarHostState.showSnackbar(
+                    message = "태스크가 이동되었습니다.",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short,
+                )
+            }
+        },
     )
 }
 
@@ -86,7 +95,7 @@ private fun KanbanBoardContent(
     // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
     var currentDragPosition by remember { mutableStateOf<Offset?>(null) }
-    val columnBounds = remember { mutableStateMapOf < Status, Rect>() }
+    val columnBounds = remember { mutableStateMapOf<Status, Rect>() }
 
     Scaffold(
         topBar = {
@@ -125,7 +134,9 @@ private fun KanbanBoardContent(
                     .firstOrNull { (_, rect) -> rect.contains(dropPosition) }?.key
 
                 draggedTask?.let { task ->
-                    onMoveTask(task, targetStatus ?: return@let)
+                    if (task.status != targetStatus) {
+                        onMoveTask(task, targetStatus ?: return@let)
+                    }
                 }
                 currentDragPosition = null
                 draggedTask = null
@@ -208,6 +219,6 @@ private fun KanbanBoardContentPreview() {
         onCreateClick = { },
         snackHost = SnackbarHostState(),
         onDismissClick = { },
-        onMoveTask = { _, _ -> }
+        onMoveTask = { _, _ -> },
     )
 }
