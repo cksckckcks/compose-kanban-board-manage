@@ -5,7 +5,7 @@ import woowacourse.kanban.board.ui.component.board.KanbanTaskInfo
 
 class KanbanBoard(
     val title: String,
-    private val tasks: MutableList<KanbanTask> = mutableListOf<KanbanTask>()
+    private val tasks: MutableList<KanbanTask> = mutableListOf<KanbanTask>(),
 ) {
     private var kanbanTaskId = 0L
 
