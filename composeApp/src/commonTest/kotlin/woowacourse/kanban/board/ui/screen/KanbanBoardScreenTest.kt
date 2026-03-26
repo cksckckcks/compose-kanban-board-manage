@@ -1,10 +1,12 @@
 package woowacourse.kanban.board.ui.screen
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -12,7 +14,10 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
+import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
+import woowacourse.kanban.board.domain.KanbanTask
+import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
 import kotlin.test.Test
 
@@ -154,5 +159,60 @@ class KanbanBoardScreenTest {
 
         // Then
         onNodeWithText("태스크가 이동되었습니다.").assertDoesNotExist()
+    }
+
+    @Test
+    fun `프로젝트에 알맞는 카드가 화면에 표시된다`() = runComposeUiTest {
+        // Given
+        val kanbanBoard = KanbanBoard(
+            tasks = mutableListOf(
+                KanbanTask(
+                    id = 1,
+                    title = "안녕하세요",
+                    status = Status.TO_DO,
+                    assignee = "다이노",
+                ),
+                KanbanTask(
+                    id = 2,
+                    title = "우아한테크코스",
+                    status = Status.IN_PROGRESS,
+                    assignee = "제임스",
+                ),
+                KanbanTask(
+                    id = 3,
+                    title = "안드로이드",
+                    status = Status.DONE,
+                    assignee = "별터",
+                ),
+                KanbanTask(
+                    id = 4,
+                    title = "8기",
+                    status = Status.TO_DO,
+                    assignee = "볼트",
+                ),
+            )
+        )
+
+        val kanbanProject = listOf(KanbanProject("안녕"), KanbanProject("잘가"))
+        kanbanProject[0].addTaskId(1L)
+        kanbanProject[0].addTaskId(2L)
+        kanbanProject[1].addTaskId(3L)
+        kanbanProject[1].addTaskId(4L)
+
+        setContent {
+            CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
+                KanbanBoardScreen(
+                    kanbanBoard = kanbanBoard,
+                    projects = kanbanProject
+                )
+            }
+        }
+
+        // When
+        onNodeWithText("잘가").performClick()
+        onNodeWithText("안녕하세요").assertDoesNotExist()
+        onNodeWithText("우아한테크코스").assertDoesNotExist()
+        onNodeWithText("안드로이드").assertIsDisplayed()
+        onNodeWithText("8기").assertIsDisplayed()
     }
 }
