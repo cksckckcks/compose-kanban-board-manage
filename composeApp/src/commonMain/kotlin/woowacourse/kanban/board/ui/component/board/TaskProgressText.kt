@@ -16,7 +16,7 @@ fun TaskProgressText(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "완료율 : $progressPercent% ($completeCount/$totalCount)",
+        text = "완료율: $progressPercent% ($completeCount/$totalCount)",
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
         color = Color(0xFF6A7282),
