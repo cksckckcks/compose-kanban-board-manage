@@ -1,12 +1,10 @@
 package woowacourse.kanban.board.ui.screen
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -14,12 +12,12 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
+import kotlin.test.Test
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
-import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {
@@ -87,7 +85,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("안녕"))
+                    projects = listOf(KanbanProject("안녕")),
                 )
             }
         }
@@ -112,7 +110,7 @@ class KanbanBoardScreenTest {
                 position = Offset(
                     x = doneBounds.center.x - taskBounds.left,
                     y = doneBounds.center.y - taskBounds.top,
-                )
+                ),
             )
             up()
         }
@@ -127,7 +125,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("안녕"))
+                    projects = listOf(KanbanProject("안녕")),
                 )
             }
         }
@@ -152,7 +150,7 @@ class KanbanBoardScreenTest {
                 position = Offset(
                     x = todoBounds.center.x - taskBounds.left,
                     y = todoBounds.center.y - taskBounds.top,
-                )
+                ),
             )
             up()
         }
@@ -190,7 +188,7 @@ class KanbanBoardScreenTest {
                     status = Status.TO_DO,
                     assignee = "볼트",
                 ),
-            )
+            ),
         )
 
         val kanbanProject = listOf(KanbanProject("안녕"), KanbanProject("잘가"))
@@ -203,7 +201,7 @@ class KanbanBoardScreenTest {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
                     kanbanBoard = kanbanBoard,
-                    projects = kanbanProject
+                    projects = kanbanProject,
                 )
             }
         }
