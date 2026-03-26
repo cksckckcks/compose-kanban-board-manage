@@ -33,10 +33,13 @@ import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
 import woowacourse.kanban.board.ui.component.dialog.TaskDialog
 
 @Composable
-fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Compose1"))) {
+fun KanbanBoardScreen(
+    projects: List<KanbanProject> = listOf(KanbanProject("Compose1")),
+    kanbanBoard: KanbanBoard = KanbanBoard(),
+) {
     val kanbanBoardState = remember {
         KanbanBoardState(
-            kanbanBoard = KanbanBoard(),
+            kanbanBoard = kanbanBoard,
             projects = projects,
         )
     }
