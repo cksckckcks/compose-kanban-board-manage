@@ -1,6 +1,7 @@
 package woowacourse.kanban.board.ui.screen
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
@@ -81,7 +82,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("잘가")),
+                    projects = listOf(KanbanProject("안녕"))
                 )
             }
         }
@@ -90,15 +91,23 @@ class KanbanBoardScreenTest {
         onNodeWithText("생성").performClick()
         onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
         onNodeWithContentDescription("닫기").performClick()
+        onNodeWithText("안녕").performClick()
 
         // When
+        val taskBounds = onNodeWithText("안녕하세요")
+            .fetchSemanticsNode()
+            .boundsInRoot
+
+        val doneBounds = onNodeWithText("Done")
+            .fetchSemanticsNode()
+            .boundsInRoot
         onNodeWithText("안녕하세요").performTouchInput {
             down(center)
             moveTo(
-                position = onNodeWithText("Done")
-                    .fetchSemanticsNode()
-                    .boundsInRoot
-                    .center,
+                position = Offset(
+                    x = doneBounds.center.x - taskBounds.left,
+                    y = doneBounds.center.y - taskBounds.top,
+                )
             )
             up()
         }
@@ -113,7 +122,7 @@ class KanbanBoardScreenTest {
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    projects = listOf(KanbanProject("잘가")),
+                    projects = listOf(KanbanProject("안녕"))
                 )
             }
         }
@@ -124,13 +133,21 @@ class KanbanBoardScreenTest {
         onNodeWithContentDescription("닫기").performClick()
 
         // When
+        val taskBounds = onNodeWithText("안녕하세요")
+            .fetchSemanticsNode()
+            .boundsInRoot
+
+        val todoBounds = onNodeWithText("To Do")
+            .fetchSemanticsNode()
+            .boundsInRoot
+
         onNodeWithText("안녕하세요").performTouchInput {
             down(center)
             moveTo(
-                position = onNodeWithText("To Do")
-                    .fetchSemanticsNode()
-                    .boundsInRoot
-                    .center,
+                position = Offset(
+                    x = todoBounds.center.x - taskBounds.left,
+                    y = todoBounds.center.y - taskBounds.top,
+                )
             )
             up()
         }
