@@ -5,33 +5,6 @@ import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
 
 class KanbanBoardTest {
-    val tasks = mutableListOf(
-        KanbanTask(
-            id = 0L,
-            title = "LazyColumn 컴포넌트 구현",
-            description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-            tags = listOf("컴포넌트", "성능"),
-            status = Status.TO_DO,
-            assignee = "다이노",
-        ),
-        KanbanTask(
-            id = 1L,
-            title = "안녕하세요",
-            description = "내용 내용 내용 내용 내용 내용 내용 내용",
-            tags = listOf("안녕", "하세요"),
-            status = Status.TO_DO,
-            assignee = "다이노",
-        ),
-        KanbanTask(
-            id = 2L,
-            title = "페어프로그래밍",
-            description = "1단계 미션을 수행합니다",
-            tags = listOf("페어", "코딩"),
-            status = Status.TO_DO,
-            assignee = "볼트",
-        ),
-    )
-
     @Test
     fun `칸반 보드 내부 태스크 리스트가 정상적으로 호출된다`() {
         // Given & When
@@ -79,4 +52,31 @@ class KanbanBoardTest {
         // Then
         assertThat(kanbanBoard.getTasks(kanbanIds).count { it.status == Status.IN_PROGRESS }).isEqualTo(1)
     }
+
+    val tasks = mutableListOf(
+        KanbanTask(
+            id = 0L,
+            title = "LazyColumn 컴포넌트 구현",
+            description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+            tags = listOf("컴포넌트", "성능"),
+            status = Status.TO_DO,
+            assignee = "다이노",
+        ),
+        KanbanTask(
+            id = 1L,
+            title = "안녕하세요",
+            description = "내용 내용 내용 내용 내용 내용 내용 내용",
+            tags = listOf("안녕", "하세요"),
+            status = Status.TO_DO,
+            assignee = "다이노",
+        ),
+        KanbanTask(
+            id = 2L,
+            title = "페어프로그래밍",
+            description = "1단계 미션을 수행합니다",
+            tags = listOf("페어", "코딩"),
+            status = Status.TO_DO,
+            assignee = "볼트",
+        ),
+    )
 }
