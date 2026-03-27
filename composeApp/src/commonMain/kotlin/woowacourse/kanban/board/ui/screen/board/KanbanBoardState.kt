@@ -12,33 +12,37 @@ import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 
 class KanbanBoardState(
-    val kanbanBoard: KanbanBoard,
-    val projects: List<KanbanProject>,
+    kanbanBoard: KanbanBoard,
+    projects: List<KanbanProject>,
 ) {
+    private val _projects = projects
+    private val _kanbanBoard = kanbanBoard
+    private val tasks = mutableStateListOf<KanbanTask>()
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
-    var tasks = mutableStateListOf<KanbanTask>()
     var isNewTaskDialog by mutableStateOf(false)
         private set
     val snackBarHostState = SnackbarHostState()
+
+    fun getTasks(): List<KanbanTask> = tasks
 
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
         updateTasks()
     }
 
-    fun getTasks(): List<KanbanTask> {
-        return kanbanBoard.getTasks(projects[selectedProjectIndex].getTaskIds())
+    fun getTasksByIds(): List<KanbanTask> {
+        return _kanbanBoard.getTasks(_projects[selectedProjectIndex].getTaskIds())
     }
 
     fun updateTasks() {
         tasks.clear()
-        tasks.addAll(getTasks())
+        tasks.addAll(getTasksByIds())
     }
 
     fun addTask(kanbanTask: KanbanTask) {
-        kanbanBoard.addTask(kanbanTask)
-        projects[selectedProjectIndex].addTaskId(kanbanTask.id)
+        _kanbanBoard.addTask(kanbanTask)
+        _projects[selectedProjectIndex].addTaskId(kanbanTask.id)
         updateTasks()
     }
 
@@ -46,7 +50,7 @@ class KanbanBoardState(
         task: KanbanTask,
         targetStatus: Status,
     ) {
-        kanbanBoard.changeTaskStatus(task, targetStatus)
+        _kanbanBoard.changeTaskStatus(task, targetStatus)
         updateTasks()
     }
 
@@ -58,8 +62,9 @@ class KanbanBoardState(
         isNewTaskDialog = false
     }
 
-    fun getProjectsTitles(): List<String> = projects.map { it.title }
+    fun getProjectsTitles(): List<String> = _projects.map { it.title }
 
     fun getCompleteCount(): Int = tasks.count { it.status == Status.DONE }
+
     fun getTotalCount(): Int = tasks.size
 }

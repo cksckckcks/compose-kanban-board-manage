@@ -55,7 +55,7 @@ fun KanbanBoardScreen(
     KanbanBoardContent(
         projectTitles = kanbanBoardState.getProjectsTitles(),
         projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
-        cards = kanbanBoardState.tasks,
+        cards = kanbanBoardState.getTasks(),
         completeCount = completeCount,
         totalCount = totalCount,
         progress = progress,
