@@ -59,7 +59,7 @@ class KanbanBoardTest {
             status = Status.TO_DO,
             assignee = "별터",
         )
-        kanbanBoard.createTask(
+        kanbanBoard.addTask(
             task = newTask,
         )
 

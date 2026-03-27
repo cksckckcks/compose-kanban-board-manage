@@ -37,7 +37,7 @@ class KanbanBoardState(
     }
 
     fun addTask(kanbanTask: KanbanTask) {
-        kanbanBoard.createTask(kanbanTask)
+        kanbanBoard.addTask(kanbanTask)
         projects[selectedProjectIndex].addTaskId(kanbanTask.id)
         updateTasks()
     }
