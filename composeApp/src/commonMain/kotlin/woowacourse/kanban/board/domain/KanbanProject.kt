@@ -2,11 +2,13 @@ package woowacourse.kanban.board.domain
 
 class KanbanProject(
     val title: String,
-    private val taskIds: MutableList<Long> = mutableListOf<Long>(),
+    taskIds: List<Long> = emptyList(),
 ) {
-    fun getTaskIds(): List<Long> = taskIds
+    private val _taskIds: MutableList<Long> = taskIds.toMutableList()
+
+    fun getTaskIds(): List<Long> = _taskIds
 
     fun addTaskId(taskId: Long) {
-        taskIds.add(taskId)
+        _taskIds.add(taskId)
     }
 }
