@@ -1,8 +1,8 @@
 package woowacourse.kanban.board.domain
 
-import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
+import kotlin.test.Test
 
 class KanbanBoardTest {
     @Test
@@ -20,7 +20,7 @@ class KanbanBoardTest {
     @Test
     fun `칸반 보드 태스크를 생성했을 때 리스트에 추가된다`() {
         // Given
-        val kanbanBoard = KanbanBoard()
+        var kanbanBoard = KanbanBoard()
         val kanbanIds = listOf(4L)
 
         // When
@@ -32,7 +32,7 @@ class KanbanBoardTest {
             status = Status.TO_DO,
             assignee = "별터",
         )
-        kanbanBoard.addTask(
+        kanbanBoard = kanbanBoard.addTask(
             task = newTask,
         )
 
@@ -43,11 +43,11 @@ class KanbanBoardTest {
     @Test
     fun `칸반 보드 태스크의 상태를 수정했을 때 상태가 반영된다`() {
         // Given
-        val kanbanBoard = KanbanBoard(tasks = tasks)
+        var kanbanBoard = KanbanBoard(tasks = tasks)
         val kanbanIds = listOf(0L, 1L, 2L)
 
         // When
-        kanbanBoard.changeTaskStatus(tasks.first(), Status.IN_PROGRESS)
+        kanbanBoard = kanbanBoard.changeTaskStatus(tasks.first(), Status.IN_PROGRESS)
 
         // Then
         assertThat(kanbanBoard.getTasks(kanbanIds).count { it.status == Status.IN_PROGRESS }).isEqualTo(1)
@@ -79,4 +79,51 @@ class KanbanBoardTest {
             assignee = "볼트",
         ),
     )
+
+    @Test
+    fun `완료된 태스크 개수를 정상적으로 반환한다`() {
+        // Given
+        val kanbanIds = listOf(0L, 1L, 2L)
+        var kanbanBoard = KanbanBoard(tasks = tasks)
+
+        // When
+        kanbanBoard = kanbanBoard
+            .changeTaskStatus(tasks[0], Status.DONE)
+            .changeTaskStatus(tasks[1], Status.DONE)
+
+        // Then
+        assertThat(kanbanBoard.getCompleteCount(kanbanIds)).isEqualTo(2)
+    }
+
+    @Test
+    fun `태스크 개수를 정상적으로 반환한다`() {
+        // Given
+        val kanbanIds = listOf(0L, 1L, 2L)
+        val kanbanBoard = KanbanBoard(tasks = tasks)
+
+        // Then
+        assertThat(kanbanBoard.getTotalCount(kanbanIds)).isEqualTo(3)
+    }
+
+    @Test
+    fun `태스크가 없을 때 완료율은 0이다`() {
+        // Given
+        val kanbanBoard = KanbanBoard()
+
+        // Then
+        assertThat(kanbanBoard.getCompleteRatio(emptyList())).isEqualTo(0f)
+    }
+
+    @Test
+    fun `완료율이 정상적으로 계산된다`() {
+        // Given
+        val kanbanIds = listOf(0L, 1L, 2L)
+        var kanbanBoard = KanbanBoard(tasks = tasks)
+
+        // When
+        kanbanBoard = kanbanBoard.changeTaskStatus(tasks[0], Status.DONE)
+
+        // Then
+        assertThat(kanbanBoard.getCompleteRatio(kanbanIds)).isEqualTo(1f / 3f)
+    }
 }
