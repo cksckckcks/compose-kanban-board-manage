@@ -5,16 +5,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -22,7 +21,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
@@ -44,13 +42,23 @@ fun KanbanBoardScreen(
         )
     }
 
-    val coroutineScope = rememberCoroutineScope()
     val snackBarHostState = kanbanBoardState.snackBarHostState
+    val snackBarMessage = kanbanBoardState.snackBarMessage
 
     val totalCount = kanbanBoardState.getTotalCount()
     val completeCount = kanbanBoardState.getCompleteCount()
     val progress = kanbanBoardState.getCompleteRatio()
     val progressPercent = (progress * 100).toInt()
+
+    LaunchedEffect(snackBarMessage) {
+        snackBarMessage?.let {
+            snackBarHostState.showSnackbar(
+                message = it,
+                withDismissAction = true,
+            )
+            kanbanBoardState.updateSnackBarMessage(null)
+        }
+    }
 
     KanbanBoardContent(
         projectTitles = kanbanBoardState.getProjectsTitles(),
@@ -70,25 +78,12 @@ fun KanbanBoardScreen(
         onCreateClick = {
             kanbanBoardState.addTask(it)
             kanbanBoardState.hideNewTaskDialog()
-
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(
-                    message = "새로운 태스크가 추가되었습니다.",
-                    withDismissAction = true,
-                )
-            }
+            kanbanBoardState.updateSnackBarMessage("새로운 태스크가 추가되었습니다.")
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             kanbanBoardState.moveTask(task, targetStatus)
-
-            coroutineScope.launch {
-                snackBarHostState.showSnackbar(
-                    message = "태스크가 이동되었습니다.",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
-            }
+            kanbanBoardState.updateSnackBarMessage("태스크가 이동되었습니다.")
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
     )
