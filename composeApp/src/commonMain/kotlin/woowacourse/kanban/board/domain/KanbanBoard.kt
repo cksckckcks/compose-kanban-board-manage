@@ -2,22 +2,35 @@ package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
 
-class KanbanBoard(tasks: List<KanbanTask> = emptyList()) {
-    private val _tasks: MutableList<KanbanTask> = tasks.toMutableList()
+data class KanbanBoard(
+    val tasks: List<KanbanTask> = emptyList(),
+) {
+    private val _tasks = tasks.toList()
 
-    fun getTasks(kanbanIds: List<Long>): List<KanbanTask> = _tasks.filter { kanbanIds.contains(it.id) }
+    fun getTasks(ids: List<Long>): List<KanbanTask> = _tasks.filter { ids.contains(it.id) }
 
-    fun addTask(task: KanbanTask) {
-        _tasks.add(task)
+    fun getTasksByStatus(ids: List<Long>, status: Status) =
+        _tasks.filter { ids.contains(it.id) && it.status == status }
+
+    fun addTask(task: KanbanTask): KanbanBoard {
+        return copy(tasks = tasks + task)
     }
 
     fun changeTaskStatus(
         task: KanbanTask,
         newStatus: Status,
-    ) {
+    ): KanbanBoard {
         val newTask = task.changeStatus(newStatus = newStatus)
 
-        _tasks.remove(task)
-        _tasks.add(newTask)
+        return copy(tasks = tasks - task + newTask)
+    }
+
+    fun getCompleteCount(ids: List<Long>) = tasks.count { ids.contains(it.id) && it.status == Status.DONE }
+
+    fun getTotalCount(ids: List<Long>) = tasks.count { ids.contains(it.id) }
+
+    fun getCompleteRatio(ids: List<Long>): Float {
+        val total = getTotalCount(ids)
+        return if (total == 0) 0f else getCompleteCount(ids).toFloat() / total
     }
 }

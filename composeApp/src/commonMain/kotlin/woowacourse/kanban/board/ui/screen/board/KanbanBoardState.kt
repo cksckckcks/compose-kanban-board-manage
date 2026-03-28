@@ -15,43 +15,43 @@ class KanbanBoardState(
     kanbanBoard: KanbanBoard,
     projects: List<KanbanProject>,
 ) {
-    private val _projects = projects
-    private val _kanbanBoard = kanbanBoard
+    private val _projects = projects.toList()
+    private var _kanbanBoard by mutableStateOf(kanbanBoard)
     private val tasks = mutableStateListOf<KanbanTask>()
+    private val selectedProjectIds get() = _projects[selectedProjectIndex].getTaskIds()
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
     var isNewTaskDialog by mutableStateOf(false)
         private set
     val snackBarHostState = SnackbarHostState()
 
-    fun getTasks(): List<KanbanTask> = tasks
-
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
         updateTasks()
     }
 
-    fun getTasksByIds(): List<KanbanTask> {
-        return _kanbanBoard.getTasks(_projects[selectedProjectIndex].getTaskIds())
+    fun getProjectTasksByIds(): List<KanbanTask> {
+        return _kanbanBoard.getTasks(ids = selectedProjectIds)
     }
+
+    fun getProjectTasksByStatus(status: Status): List<KanbanTask> =
+        _kanbanBoard.getTasksByStatus(ids = selectedProjectIds, status = status)
 
     fun updateTasks() {
         tasks.clear()
-        tasks.addAll(getTasksByIds())
+        tasks.addAll(getProjectTasksByIds())
     }
 
     fun addTask(kanbanTask: KanbanTask) {
-        _kanbanBoard.addTask(kanbanTask)
+        _kanbanBoard = _kanbanBoard.addTask(kanbanTask)
         _projects[selectedProjectIndex].addTaskId(kanbanTask.id)
-        updateTasks()
     }
 
     fun moveTask(
         task: KanbanTask,
         targetStatus: Status,
     ) {
-        _kanbanBoard.changeTaskStatus(task, targetStatus)
-        updateTasks()
+        _kanbanBoard = _kanbanBoard.changeTaskStatus(task, targetStatus)
     }
 
     fun showNewTaskDialog() {
@@ -64,7 +64,9 @@ class KanbanBoardState(
 
     fun getProjectsTitles(): List<String> = _projects.map { it.title }
 
-    fun getCompleteCount(): Int = tasks.count { it.status == Status.DONE }
+    fun getCompleteCount(): Int = _kanbanBoard.getCompleteCount(selectedProjectIds)
 
-    fun getTotalCount(): Int = tasks.size
+    fun getTotalCount(): Int = _kanbanBoard.getTotalCount(selectedProjectIds)
+
+    fun getCompleteRatio(): Float = _kanbanBoard.getCompleteRatio(selectedProjectIds)
 }

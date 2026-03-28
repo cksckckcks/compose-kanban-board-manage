@@ -49,13 +49,12 @@ fun KanbanBoardScreen(
 
     val totalCount = kanbanBoardState.getTotalCount()
     val completeCount = kanbanBoardState.getCompleteCount()
-    val progress = if (totalCount == 0) 0f else completeCount.toFloat() / totalCount.toFloat()
+    val progress = kanbanBoardState.getCompleteRatio()
     val progressPercent = (progress * 100).toInt()
 
     KanbanBoardContent(
         projectTitles = kanbanBoardState.getProjectsTitles(),
         projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
-        cards = kanbanBoardState.getTasks(),
         completeCount = completeCount,
         totalCount = totalCount,
         progress = progress,
@@ -91,6 +90,7 @@ fun KanbanBoardScreen(
                 )
             }
         },
+        getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
     )
 }
 
@@ -98,7 +98,6 @@ fun KanbanBoardScreen(
 private fun KanbanBoardContent(
     projectTitles: List<String>,
     projectSelectedIndex: Int,
-    cards: List<KanbanTask>,
     completeCount: Int,
     totalCount: Int,
     progress: Float,
@@ -110,6 +109,7 @@ private fun KanbanBoardContent(
     onCreateClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
+    getTasksByStatus: (Status) -> List<KanbanTask>,
 ) {
     // drag
     var draggedTask by remember { mutableStateOf<KanbanTask?>(null) }
@@ -146,7 +146,7 @@ private fun KanbanBoardContent(
                 )
 
                 CardGroup(
-                    cards = cards,
+                    getTasksByStatus = getTasksByStatus,
                     modifier = Modifier
                         .padding(24.dp),
                     getIsDropTarget = { status ->
@@ -196,50 +196,52 @@ private fun KanbanBoardContentPreview() {
     KanbanBoardContent(
         projectTitles = listOf("1", "2"),
         projectSelectedIndex = 0,
-        cards = listOf(
-            KanbanTask(
-                title = "LazyColumn 컴포넌트 구현",
-                description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-                tags = listOf("컴포넌트", "성능"),
-                status = Status.TO_DO,
-                assignee = "다이노",
-            ),
-            KanbanTask(
-                title = "LazyColumn 컴포넌트 구현",
-                description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-                tags = listOf("컴포넌트", "성능"),
-                status = Status.TO_DO,
-                assignee = "다이노",
-            ),
-            KanbanTask(
-                title = "LazyColumn 컴포넌트 구현",
-                description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-                tags = listOf("컴포넌트", "성능"),
-                status = Status.IN_PROGRESS,
-                assignee = "다이노",
-            ),
-            KanbanTask(
-                title = "LazyColumn 컴포넌트 구현",
-                description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-                tags = listOf("컴포넌트", "성능"),
-                status = Status.DONE,
-                assignee = "다이노",
-            ),
-            KanbanTask(
-                title = "LazyColumn 컴포넌트 구현",
-                description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-                tags = listOf("컴포넌트", "성능"),
-                status = Status.DONE,
-                assignee = "다이노",
-            ),
-            KanbanTask(
-                title = "LazyColumn 컴포넌트 구현",
-                description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
-                tags = listOf("컴포넌트", "성능"),
-                status = Status.DONE,
-                assignee = "다이노",
-            ),
-        ),
+        getTasksByStatus = {
+            listOf(
+                KanbanTask(
+                    title = "LazyColumn 컴포넌트 구현",
+                    description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                    tags = listOf("컴포넌트", "성능"),
+                    status = Status.TO_DO,
+                    assignee = "다이노",
+                ),
+                KanbanTask(
+                    title = "LazyColumn 컴포넌트 구현",
+                    description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                    tags = listOf("컴포넌트", "성능"),
+                    status = Status.TO_DO,
+                    assignee = "다이노",
+                ),
+                KanbanTask(
+                    title = "LazyColumn 컴포넌트 구현",
+                    description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                    tags = listOf("컴포넌트", "성능"),
+                    status = Status.IN_PROGRESS,
+                    assignee = "다이노",
+                ),
+                KanbanTask(
+                    title = "LazyColumn 컴포넌트 구현",
+                    description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                    tags = listOf("컴포넌트", "성능"),
+                    status = Status.DONE,
+                    assignee = "다이노",
+                ),
+                KanbanTask(
+                    title = "LazyColumn 컴포넌트 구현",
+                    description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                    tags = listOf("컴포넌트", "성능"),
+                    status = Status.DONE,
+                    assignee = "다이노",
+                ),
+                KanbanTask(
+                    title = "LazyColumn 컴포넌트 구현",
+                    description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
+                    tags = listOf("컴포넌트", "성능"),
+                    status = Status.DONE,
+                    assignee = "다이노",
+                ),
+            )
+       },
         completeCount = 3,
         totalCount = 6,
         progress = 0.5f,
