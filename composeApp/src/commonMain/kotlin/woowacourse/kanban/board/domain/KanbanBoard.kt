@@ -2,13 +2,13 @@ package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
 
-data class KanbanBoard(
-    val tasks: List<KanbanTask> = emptyList(),
-) {
+data class KanbanBoard(val tasks: List<KanbanTask> = emptyList()) {
     private val _tasks = tasks.toList()
 
-    fun getTasksByStatus(ids: List<Long>, status: Status) =
-        _tasks.filter { ids.contains(it.id) && it.status == status }
+    fun getTasksByStatus(
+        ids: List<Long>,
+        status: Status,
+    ) = _tasks.filter { ids.contains(it.id) && it.status == status }
 
     fun addTask(task: KanbanTask): KanbanBoard {
         return copy(tasks = tasks + task)

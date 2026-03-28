@@ -4,7 +4,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
@@ -26,7 +25,6 @@ class KanbanBoardState(
     var snackBarMessage by mutableStateOf<String?>(null)
         private set
 
-
     fun updateSnackBarMessage(newMessage: String?) {
         snackBarMessage = newMessage
     }
@@ -34,8 +32,7 @@ class KanbanBoardState(
         selectedProjectIndex = newIndex
     }
 
-    fun getProjectTasksByStatus(status: Status): List<KanbanTask> =
-        _kanbanBoard.getTasksByStatus(ids = selectedProjectIds, status = status)
+    fun getProjectTasksByStatus(status: Status): List<KanbanTask> = _kanbanBoard.getTasksByStatus(ids = selectedProjectIds, status = status)
 
     fun addTask(kanbanTask: KanbanTask) {
         _kanbanBoard = _kanbanBoard.addTask(kanbanTask)

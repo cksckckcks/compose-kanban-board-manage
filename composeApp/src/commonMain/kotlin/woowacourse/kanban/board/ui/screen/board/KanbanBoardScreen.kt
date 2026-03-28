@@ -236,7 +236,7 @@ private fun KanbanBoardContentPreview() {
                     assignee = "다이노",
                 ),
             )
-       },
+        },
         completeCount = 3,
         totalCount = 6,
         progress = 0.5f,

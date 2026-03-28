@@ -93,6 +93,6 @@ private fun CardGroupPreview() {
                     assignee = "다이노",
                 ),
             )
-        }
+        },
     )
 }
