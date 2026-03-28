@@ -3,7 +3,6 @@ package woowacourse.kanban.board.ui.screen.board
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
@@ -17,7 +16,6 @@ class KanbanBoardState(
 ) {
     private val _projects = projects.toList()
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
-    private val tasks = mutableStateListOf<KanbanTask>()
     private val selectedProjectIds get() = _projects[selectedProjectIndex].getTaskIds()
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
@@ -27,20 +25,10 @@ class KanbanBoardState(
 
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
-        updateTasks()
-    }
-
-    fun getProjectTasksByIds(): List<KanbanTask> {
-        return _kanbanBoard.getTasks(ids = selectedProjectIds)
     }
 
     fun getProjectTasksByStatus(status: Status): List<KanbanTask> =
         _kanbanBoard.getTasksByStatus(ids = selectedProjectIds, status = status)
-
-    fun updateTasks() {
-        tasks.clear()
-        tasks.addAll(getProjectTasksByIds())
-    }
 
     fun addTask(kanbanTask: KanbanTask) {
         _kanbanBoard = _kanbanBoard.addTask(kanbanTask)
