@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -58,14 +60,19 @@ fun AssigneeOptionCard(
     }
 }
 
+private class AssigneeOptionCardParameterProvider : PreviewParameterProvider<Boolean> {
+    override val values = sequenceOf(
+        true,
+        false,
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
-private fun AssigneeOptionCardPreview() {
-    var isSelected by remember { mutableStateOf(false) }
-
+private fun AssigneeOptionCardPreview(@PreviewParameter(AssigneeOptionCardParameterProvider::class) isSelected: Boolean) {
     AssigneeOptionCard(
         name = "다이노",
         isSelected = isSelected,
-        onClick = { isSelected = !isSelected },
+        onClick = { },
     )
 }

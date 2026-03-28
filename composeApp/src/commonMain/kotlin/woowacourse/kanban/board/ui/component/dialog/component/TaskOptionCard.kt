@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -49,14 +51,19 @@ fun TaskOptionCard(
     }
 }
 
+private class TaskOptionCardParameterProvider : PreviewParameterProvider<Boolean> {
+    override val values = sequenceOf(
+        true,
+        false,
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
-private fun TaskOptionCardPreview() {
-    var isSelected by remember { mutableStateOf(false) }
-
+private fun TaskOptionCardPreview(@PreviewParameter(TaskOptionCardParameterProvider::class) isSelected: Boolean) {
     TaskOptionCard(
         isSelected = isSelected,
-        onClick = { isSelected = !isSelected },
+        onClick = { },
     ) {
         Text(
             text = "To Do",

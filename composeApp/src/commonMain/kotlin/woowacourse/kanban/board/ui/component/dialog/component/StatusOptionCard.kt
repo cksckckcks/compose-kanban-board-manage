@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import woowacourse.kanban.board.domain.dialog.Status
@@ -48,14 +50,19 @@ fun StatusOptionCard(
     }
 }
 
+private class StatusOptionCardParameterProvider : PreviewParameterProvider<Boolean> {
+    override val values = sequenceOf(
+        true,
+        false,
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
-private fun StatusOptionCardPreview() {
-    var isSelected by remember { mutableStateOf(false) }
-
+private fun StatusOptionCardPreview(@PreviewParameter(StatusOptionCardParameterProvider::class) isSelected: Boolean) {
     StatusOptionCard(
         status = Status.TO_DO,
         isSelected = isSelected,
-        onClick = { isSelected = !isSelected },
+        onClick = { },
     )
 }
