@@ -12,9 +12,9 @@ import androidx.compose.ui.unit.sp
 fun TaskFieldLabel(
     label: String,
     modifier: Modifier = Modifier,
-    isRequired: Boolean = false,
+    showRequiredMark: Boolean = false,
 ) {
-    val text = if (isRequired) "$label *" else label
+    val text = if (showRequiredMark) "$label *" else label
 
     Text(
         text = text,
@@ -35,6 +35,6 @@ private class TaskFieldLabelParameterProvider : PreviewParameterProvider<Pair<St
 private fun TaskFieldLabelPreview(@PreviewParameter(TaskFieldLabelParameterProvider::class) params: Pair<String, Boolean>) {
     TaskFieldLabel(
         label = params.first,
-        isRequired = params.second,
+        showRequiredMark = params.second,
     )
 }

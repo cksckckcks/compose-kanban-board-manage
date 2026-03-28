@@ -261,7 +261,7 @@ private fun TitleField(
 ) {
     TaskLabelLayout(
         label = "제목",
-        isRequired = true,
+        showRequiredMark = true,
         modifier = modifier,
     ) {
         TaskDialogTextField(
@@ -325,7 +325,7 @@ private fun StatusSegmentedButtons(
 ) {
     TaskLabelLayout(
         label = "상태",
-        isRequired = true,
+        showRequiredMark = true,
         modifier = modifier,
     ) {
         Row(
@@ -351,7 +351,7 @@ private fun AssigneesSegmentedButtons(
 ) {
     TaskLabelLayout(
         label = "담당자",
-        isRequired = true,
+        showRequiredMark = true,
         modifier = modifier,
     ) {
         FlowRow(
@@ -373,7 +373,7 @@ private fun AssigneesSegmentedButtons(
 private fun TaskLabelLayout(
     label: String,
     modifier: Modifier = Modifier,
-    isRequired: Boolean = false,
+    showRequiredMark: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -381,7 +381,7 @@ private fun TaskLabelLayout(
     ) {
         TaskFieldLabel(
             label = label,
-            isRequired = isRequired,
+            showRequiredMark = showRequiredMark,
         )
 
         Spacer(Modifier.height(8.dp))
