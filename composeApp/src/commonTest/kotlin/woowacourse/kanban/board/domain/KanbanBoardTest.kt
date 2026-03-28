@@ -6,18 +6,6 @@ import kotlin.test.Test
 
 class KanbanBoardTest {
     @Test
-    fun `칸반 보드 내부 태스크 리스트가 정상적으로 호출된다`() {
-        // Given & When
-        val kanbanIds = listOf(0L, 1L, 2L)
-        val kanbanBoard = KanbanBoard(
-            tasks = tasks,
-        )
-
-        // Then
-        assertThat(kanbanBoard.getTasks(kanbanIds)).isEqualTo(tasks)
-    }
-
-    @Test
     fun `칸반 보드 태스크를 생성했을 때 리스트에 추가된다`() {
         // Given
         var kanbanBoard = KanbanBoard()
@@ -37,7 +25,7 @@ class KanbanBoardTest {
         )
 
         // Then
-        assertThat(kanbanBoard.getTasks(kanbanIds).count { it.assignee == "별터" }).isEqualTo(1)
+        assertThat(kanbanBoard.getTasksByStatus(ids = kanbanIds, status = Status.TO_DO).count { it.assignee == "별터" }).isEqualTo(1)
     }
 
     @Test
@@ -50,7 +38,7 @@ class KanbanBoardTest {
         kanbanBoard = kanbanBoard.changeTaskStatus(tasks.first(), Status.IN_PROGRESS)
 
         // Then
-        assertThat(kanbanBoard.getTasks(kanbanIds).count { it.status == Status.IN_PROGRESS }).isEqualTo(1)
+        assertThat(kanbanBoard.getTasksByStatus(ids = kanbanIds, status = Status.IN_PROGRESS).size).isEqualTo(1)
     }
 
     val tasks = mutableListOf(

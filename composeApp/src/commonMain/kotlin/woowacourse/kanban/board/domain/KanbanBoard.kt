@@ -7,8 +7,6 @@ data class KanbanBoard(
 ) {
     private val _tasks = tasks.toList()
 
-    fun getTasks(ids: List<Long>): List<KanbanTask> = _tasks.filter { ids.contains(it.id) }
-
     fun getTasksByStatus(ids: List<Long>, status: Status) =
         _tasks.filter { ids.contains(it.id) && it.status == status }
 
