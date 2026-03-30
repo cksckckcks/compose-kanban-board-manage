@@ -12,7 +12,6 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
-import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
@@ -197,12 +196,10 @@ class KanbanBoardScreenTest {
                 ),
             ),
         )
-        val kanbanBoard = KanbanBoard(projects = projects)
 
         setContent {
             CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
                 KanbanBoardScreen(
-                    kanbanBoard = kanbanBoard,
                     projects = projects,
                 )
             }
