@@ -11,13 +11,20 @@ data class KanbanBoard(val projects: List<KanbanProject> = listOf(KanbanProject(
 
     fun getProject(index: Int) = _projects[index]
 
-    fun changeTaskStatus(projectIndex: Int, task: KanbanTask, newStatus: Status): KanbanBoard {
+    fun changeTaskStatus(
+        projectIndex: Int,
+        task: KanbanTask,
+        newStatus: Status,
+    ): KanbanBoard {
         val newProject = _projects[projectIndex].changeTaskStatus(task = task, newStatus = newStatus)
 
         return copy(projects = _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project })
     }
 
-    fun addTask(projectIndex: Int, task: KanbanTask): KanbanBoard {
+    fun addTask(
+        projectIndex: Int,
+        task: KanbanTask,
+    ): KanbanBoard {
         val newProject = _projects[projectIndex].addTask(task = task)
 
         return copy(projects = _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project })

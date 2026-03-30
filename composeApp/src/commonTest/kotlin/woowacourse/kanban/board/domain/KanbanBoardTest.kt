@@ -1,8 +1,8 @@
 package woowacourse.kanban.board.domain
 
+import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
-import kotlin.test.Test
 
 class KanbanBoardTest {
     @Test
@@ -11,7 +11,7 @@ class KanbanBoardTest {
         val projects = listOf(
             KanbanProject(title = "안녕"),
 
-            )
+        )
         var kanbanBoard = KanbanBoard(projects = projects)
 
         // When
@@ -51,7 +51,7 @@ class KanbanBoardTest {
                 ),
             ),
 
-            )
+        )
 
         var kanbanBoard = KanbanBoard(projects = projects)
 

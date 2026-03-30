@@ -12,11 +12,11 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.Density
+import kotlin.test.Test
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardScreen
-import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
 class KanbanBoardScreenTest {

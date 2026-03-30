@@ -8,9 +8,7 @@ import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 
-class KanbanBoardState(
-    kanbanBoard: KanbanBoard,
-) {
+class KanbanBoardState(kanbanBoard: KanbanBoard) {
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
     private val _projects get() = _kanbanBoard.getProjectList()
     private val selectedProject get() = _projects[selectedProjectIndex]
@@ -23,8 +21,7 @@ class KanbanBoardState(
         selectedProjectIndex = newIndex
     }
 
-    fun getProjectTasksByStatus(status: Status): List<KanbanTask> =
-        selectedProject.getTasksByStatus(status = status)
+    fun getProjectTasksByStatus(status: Status): List<KanbanTask> = selectedProject.getTasksByStatus(status = status)
 
     fun addTask(kanbanTask: KanbanTask) {
         _kanbanBoard = _kanbanBoard

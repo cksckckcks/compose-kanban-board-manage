@@ -33,9 +33,7 @@ import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
 import woowacourse.kanban.board.ui.component.dialog.TaskDialog
 
 @Composable
-fun KanbanBoardScreen(
-    projects: List<KanbanProject> = listOf(KanbanProject("Compose1")),
-) {
+fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Compose1"))) {
     val kanbanBoardState = remember {
         KanbanBoardState(
             kanbanBoard = KanbanBoard(projects = projects),
@@ -54,7 +52,7 @@ fun KanbanBoardScreen(
         snackBarChannel.receiveAsFlow().collect { message ->
             snackBarHostState.showSnackbar(
                 message = message,
-                withDismissAction = true
+                withDismissAction = true,
             )
         }
     }

@@ -1,12 +1,12 @@
 package woowacourse.kanban.board.ui.screen
 
+import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardState
-import kotlin.test.Test
 
 class KanbanBoardStateTest {
     @Test
