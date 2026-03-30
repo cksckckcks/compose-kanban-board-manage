@@ -40,8 +40,8 @@ fun KanbanBoardScreen(
         )
     }
 
-    val snackBarHostState = kanbanBoardState.snackBarHostState
-    val snackBarMessage = kanbanBoardState.snackBarMessage
+    val snackBarHostState = SnackbarHostState()
+    var snackBarMessage by remember { mutableStateOf<String?>(null) }
 
     val totalCount = kanbanBoardState.getTotalCount()
     val completeCount = kanbanBoardState.getCompleteCount()
@@ -54,7 +54,7 @@ fun KanbanBoardScreen(
                 message = it,
                 withDismissAction = true,
             )
-            kanbanBoardState.updateSnackBarMessage(null)
+            snackBarMessage = null
         }
     }
 
@@ -76,12 +76,12 @@ fun KanbanBoardScreen(
         onCreateClick = {
             kanbanBoardState.addTask(it)
             kanbanBoardState.hideNewTaskDialog()
-            kanbanBoardState.updateSnackBarMessage("새로운 태스크가 추가되었습니다.")
+            snackBarMessage = "새로운 태스크가 추가되었습니다."
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             kanbanBoardState.moveTask(task, targetStatus)
-            kanbanBoardState.updateSnackBarMessage("태스크가 이동되었습니다.")
+            snackBarMessage = "태스크가 이동되었습니다."
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
     )

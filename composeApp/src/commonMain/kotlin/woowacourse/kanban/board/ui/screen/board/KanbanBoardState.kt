@@ -1,6 +1,5 @@
 package woowacourse.kanban.board.ui.screen.board
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -19,13 +18,6 @@ class KanbanBoardState(
         private set
     var isNewTaskDialog by mutableStateOf(false)
         private set
-    val snackBarHostState = SnackbarHostState()
-    var snackBarMessage by mutableStateOf<String?>(null)
-        private set
-
-    fun updateSnackBarMessage(newMessage: String?) {
-        snackBarMessage = newMessage
-    }
 
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
