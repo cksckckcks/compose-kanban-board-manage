@@ -2,33 +2,24 @@ package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
 
-data class KanbanBoard(val tasks: List<KanbanTask> = emptyList()) {
-    private val _tasks = tasks.toList()
+data class KanbanBoard(val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
+    private val _projects = projects.toList()
 
-    fun getTasksByStatus(
-        ids: List<Long>,
-        status: Status,
-    ) = _tasks.filter { ids.contains(it.id) && it.status == status }
+    fun getProjectTitles(): List<String> = _projects.map { it.title }
 
-    fun addTask(task: KanbanTask): KanbanBoard {
-        return copy(tasks = tasks + task)
+    fun getProjectList() = _projects
+
+    fun getProject(index: Int) = _projects[index]
+
+    fun changeTaskStatus(projectIndex: Int, task: KanbanTask, newStatus: Status): KanbanBoard {
+        val newProject = _projects[projectIndex].changeTaskStatus(task = task, newStatus = newStatus)
+
+        return copy(projects = _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project })
     }
 
-    fun changeTaskStatus(
-        task: KanbanTask,
-        newStatus: Status,
-    ): KanbanBoard {
-        val newTask = task.changeStatus(newStatus = newStatus)
+    fun addTask(projectIndex: Int, task: KanbanTask): KanbanBoard {
+        val newProject = _projects[projectIndex].addTask(task = task)
 
-        return copy(tasks = tasks - task + newTask)
-    }
-
-    fun getCompleteCount(ids: List<Long>) = tasks.count { ids.contains(it.id) && it.status == Status.DONE }
-
-    fun getTotalCount(ids: List<Long>) = tasks.count { ids.contains(it.id) }
-
-    fun getCompleteRatio(ids: List<Long>): Float {
-        val total = getTotalCount(ids)
-        return if (total == 0) 0f else getCompleteCount(ids).toFloat() / total
+        return copy(projects = _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project })
     }
 }

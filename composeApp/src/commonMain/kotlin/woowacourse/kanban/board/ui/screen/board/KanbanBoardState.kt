@@ -6,17 +6,15 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
-import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 
 class KanbanBoardState(
     kanbanBoard: KanbanBoard,
-    projects: List<KanbanProject>,
 ) {
-    private val _projects = projects.toList()
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
-    private val selectedProjectIds get() = _projects[selectedProjectIndex].getTaskIds()
+    private val _projects get() = _kanbanBoard.getProjectList()
+    private val selectedProject get() = _projects[selectedProjectIndex]
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
     var isNewTaskDialog by mutableStateOf(false)
@@ -28,22 +26,32 @@ class KanbanBoardState(
     fun updateSnackBarMessage(newMessage: String?) {
         snackBarMessage = newMessage
     }
+
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
     }
 
-    fun getProjectTasksByStatus(status: Status): List<KanbanTask> = _kanbanBoard.getTasksByStatus(ids = selectedProjectIds, status = status)
+    fun getProjectTasksByStatus(status: Status): List<KanbanTask> =
+        selectedProject.getTasksByStatus(status = status)
 
     fun addTask(kanbanTask: KanbanTask) {
-        _kanbanBoard = _kanbanBoard.addTask(kanbanTask)
-        _projects[selectedProjectIndex].addTaskId(kanbanTask.id)
+        _kanbanBoard = _kanbanBoard
+            .addTask(
+                projectIndex = selectedProjectIndex,
+                task = kanbanTask,
+            )
     }
 
     fun moveTask(
         task: KanbanTask,
         targetStatus: Status,
     ) {
-        _kanbanBoard = _kanbanBoard.changeTaskStatus(task, targetStatus)
+        _kanbanBoard = _kanbanBoard
+            .changeTaskStatus(
+                projectIndex = selectedProjectIndex,
+                task = task,
+                newStatus = targetStatus,
+            )
     }
 
     fun showNewTaskDialog() {
@@ -54,11 +62,11 @@ class KanbanBoardState(
         isNewTaskDialog = false
     }
 
-    fun getProjectsTitles(): List<String> = _projects.map { it.title }
+    fun getProjectsTitles(): List<String> = _kanbanBoard.getProjectTitles()
 
-    fun getCompleteCount(): Int = _kanbanBoard.getCompleteCount(selectedProjectIds)
+    fun getCompleteCount(): Int = selectedProject.getCompleteCount()
 
-    fun getTotalCount(): Int = _kanbanBoard.getTotalCount(selectedProjectIds)
+    fun getTotalCount(): Int = selectedProject.getTotalCount()
 
-    fun getCompleteRatio(): Float = _kanbanBoard.getCompleteRatio(selectedProjectIds)
+    fun getCompleteRatio(): Float = selectedProject.getCompleteRatio()
 }

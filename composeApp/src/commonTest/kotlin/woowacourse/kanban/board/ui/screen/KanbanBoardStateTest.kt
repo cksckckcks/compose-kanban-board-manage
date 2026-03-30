@@ -1,12 +1,12 @@
 package woowacourse.kanban.board.ui.screen
 
-import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardState
+import kotlin.test.Test
 
 class KanbanBoardStateTest {
     @Test
@@ -18,30 +18,32 @@ class KanbanBoardStateTest {
             assignee = "볼트",
             status = Status.TO_DO,
         )
-
-        val kanbanBoard = KanbanBoard(
-            tasks = listOf(
-                KanbanTask(
-                    id = 0L,
-                    title = "안녕",
-                    assignee = "볼트",
-                    status = Status.TO_DO,
+        val projects = listOf(
+            KanbanProject(
+                title = "안녕",
+                tasks = listOf(
+                    KanbanTask(
+                        id = 0L,
+                        title = "안녕",
+                        assignee = "볼트",
+                        status = Status.TO_DO,
+                    ),
+                    KanbanTask(
+                        id = 2L,
+                        title = "안녕",
+                        assignee = "볼트",
+                        status = Status.TO_DO,
+                    ),
                 ),
-                KanbanTask(
-                    id = 2L,
-                    title = "안녕",
-                    assignee = "볼트",
-                    status = Status.TO_DO,
-                ),
-                task,
+            ),
+            KanbanProject(
+                title = "잘가",
+                tasks = listOf(task),
             ),
         )
-        val projects = listOf(
-            KanbanProject(title = "안녕", taskIds = listOf(0L, 2L)),
-            KanbanProject(title = "안녕", taskIds = listOf(1L)),
-        )
+        val kanbanBoard = KanbanBoard(projects = projects)
 
-        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard, projects = projects)
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
         kanbanBoardState.updateSelectedProjectIndex(1)
@@ -60,28 +62,33 @@ class KanbanBoardStateTest {
             status = Status.TO_DO,
         )
 
-        val kanbanBoard = KanbanBoard(
-            tasks = listOf(
-                KanbanTask(
-                    id = 0L,
-                    title = "안녕",
-                    assignee = "볼트",
-                    status = Status.TO_DO,
-                ),
-                KanbanTask(
-                    id = 2L,
-                    title = "안녕",
-                    assignee = "볼트",
-                    status = Status.TO_DO,
+        val projects = listOf(
+            KanbanProject(
+                title = "안녕",
+                tasks = listOf(),
+            ),
+            KanbanProject(
+                title = "잘가",
+                tasks = listOf(
+                    KanbanTask(
+                        id = 0L,
+                        title = "안녕",
+                        assignee = "볼트",
+                        status = Status.TO_DO,
+                    ),
+                    KanbanTask(
+                        id = 2L,
+                        title = "안녕",
+                        assignee = "볼트",
+                        status = Status.TO_DO,
+                    ),
                 ),
             ),
         )
-        val projects = listOf(
-            KanbanProject(title = "안녕", taskIds = listOf()),
-            KanbanProject(title = "안녕", taskIds = listOf(0L, 2L)),
-        )
 
-        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard, projects = projects)
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
         kanbanBoardState.addTask(task)
@@ -100,10 +107,10 @@ class KanbanBoardStateTest {
             status = Status.TO_DO,
         )
 
-        val kanbanBoard = KanbanBoard(tasks = listOf(task))
-        val projects = listOf(KanbanProject(title = "안녕", taskIds = listOf(1L)))
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
 
-        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard, projects = projects)
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
         kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
@@ -119,7 +126,7 @@ class KanbanBoardStateTest {
         val titles = listOf("안녕", "잘가")
         val projects = titles.map { KanbanProject(title = it) }
 
-        val kanbanBoardState = KanbanBoardState(kanbanBoard = KanbanBoard(), projects = projects)
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = KanbanBoard(projects = projects))
 
         // Then
         assertThat(kanbanBoardState.getProjectsTitles()).isEqualTo(titles)

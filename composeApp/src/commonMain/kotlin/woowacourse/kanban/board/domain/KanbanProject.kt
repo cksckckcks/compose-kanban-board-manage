@@ -1,14 +1,36 @@
 package woowacourse.kanban.board.domain
 
-class KanbanProject(
+import woowacourse.kanban.board.domain.dialog.Status
+
+data class KanbanProject(
     val title: String,
-    taskIds: List<Long> = emptyList(),
+    private val tasks: List<KanbanTask> = emptyList(),
 ) {
-    private val _taskIds: MutableList<Long> = taskIds.toMutableList()
+    private val _tasks = tasks.toList()
 
-    fun getTaskIds(): List<Long> = _taskIds.toList()
+    fun getTasks(): List<KanbanTask> = _tasks
 
-    fun addTaskId(taskId: Long) {
-        _taskIds.add(taskId)
+    fun addTask(task: KanbanTask): KanbanProject {
+        return copy(tasks = _tasks + task)
+    }
+
+    fun changeTaskStatus(
+        task: KanbanTask,
+        newStatus: Status,
+    ): KanbanProject {
+        val newTask = task.changeStatus(newStatus = newStatus)
+
+        return copy(tasks = _tasks - task + newTask)
+    }
+
+    fun getTasksByStatus(status: Status): List<KanbanTask> = _tasks.filter { it.status == status }
+
+    fun getCompleteCount() = _tasks.count { it.status == Status.DONE }
+
+    fun getTotalCount() = _tasks.size
+
+    fun getCompleteRatio(): Float {
+        val total = getTotalCount()
+        return if (total == 0) 0f else getCompleteCount().toFloat() / total
     }
 }
