@@ -21,6 +21,8 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
@@ -40,21 +42,20 @@ fun KanbanBoardScreen(
         )
     }
 
-    val snackBarHostState = SnackbarHostState()
-    var snackBarMessage by remember { mutableStateOf<String?>(null) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val snackBarChannel = remember { Channel<String>(Channel.BUFFERED) }
 
     val totalCount = kanbanBoardState.getTotalCount()
     val completeCount = kanbanBoardState.getCompleteCount()
     val progress = kanbanBoardState.getCompleteRatio()
     val progressPercent = (progress * 100).toInt()
 
-    LaunchedEffect(snackBarMessage) {
-        snackBarMessage?.let {
+    LaunchedEffect(Unit) {
+        snackBarChannel.receiveAsFlow().collect { message ->
             snackBarHostState.showSnackbar(
-                message = it,
-                withDismissAction = true,
+                message = message,
+                withDismissAction = true
             )
-            snackBarMessage = null
         }
     }
 
@@ -76,12 +77,12 @@ fun KanbanBoardScreen(
         onCreateClick = {
             kanbanBoardState.addTask(it)
             kanbanBoardState.hideNewTaskDialog()
-            snackBarMessage = "새로운 태스크가 추가되었습니다."
+            snackBarChannel.trySend("새로운 태스크가 추가되었습니다.")
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
             kanbanBoardState.moveTask(task, targetStatus)
-            snackBarMessage = "태스크가 이동되었습니다."
+            snackBarChannel.trySend("태스크가 이동되었습니다.")
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
     )
