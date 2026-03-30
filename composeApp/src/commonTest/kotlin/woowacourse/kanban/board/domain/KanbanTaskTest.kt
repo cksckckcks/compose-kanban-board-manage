@@ -1,9 +1,9 @@
 package woowacourse.kanban.board.domain
 
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class KanbanTaskTest {
     @Test
@@ -136,5 +136,21 @@ class KanbanTaskTest {
     @Test
     fun `isTagFormatValid 검증 - 태그 중 하나라도 비어있으면 false를 반환한다`() {
         assertThat(KanbanTask.isTagFormatValid(listOf("정상", ""))).isFalse()
+    }
+
+    @Test
+    fun `태스크 상태를 변경하면 새로운 상태가 적용된다`() {
+        // Given
+        val task = KanbanTask(
+            title = "안녕하세요~",
+            status = Status.TO_DO,
+            assignee = "볼트",
+        )
+
+        // When
+        val statusUpdateTask = task.changeStatus(Status.DONE)
+
+        // Then
+        assertThat(statusUpdateTask.status).isEqualTo(Status.DONE)
     }
 }
