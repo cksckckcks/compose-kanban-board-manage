@@ -337,6 +337,7 @@ private fun StatusSegmentedButtons(
                     text = status.toTitle(),
                     isSelected = selectedStatus == status,
                     onClick = { onStatusChanged(status) },
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
