@@ -33,6 +33,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.ui.component.board.toTitle
 import woowacourse.kanban.board.ui.component.dialog.component.AssigneeOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.StatusOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogCancelButton
@@ -331,11 +332,11 @@ private fun StatusSegmentedButtons(
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            statuses.forEach {
+            statuses.forEach { status ->
                 StatusOptionCard(
-                    status = it,
-                    isSelected = selectedStatus == it,
-                    onClick = { onStatusChanged(it) },
+                    text = status.toTitle(),
+                    isSelected = selectedStatus == status,
+                    onClick = { onStatusChanged(status) },
                 )
             }
         }

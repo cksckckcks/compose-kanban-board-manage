@@ -30,13 +30,13 @@
 ### 도메인
 - [x] KanbanTask 모델 assignee nullable로 수정
     - [x] 담당자 지정 규칙 검사 기능
-- [ ] Status 수정
-    - [ ] Status에 Review 추가
-    - [ ] 이동 가능 여부 판단하는 기능
-    - [ ] 상태에 따른 색상 값, Title Text 값 확장함수에 추가
+- [x] Status 수정
+    - [x] Status에 Review 추가
+    - [x] 상태에 따른 색상 값, Title Text 값 확장함수에 추가
 
 ### UI
 - [ ] 이동 가능할 때만 이동되도록 코드 수정
+    - [ ] 이동 가능 여부 판단하는 기능
     - [ ] 담당자 없이 Todo → In Progress 이동 시 스낵바를 띄우는 기능
 - [ ] 다이얼로그 수정
     - [ ] 다이얼로그 스테이트 홀더 적용

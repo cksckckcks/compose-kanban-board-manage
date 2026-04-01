@@ -19,16 +19,12 @@ import woowacourse.kanban.board.domain.dialog.Status
 
 @Composable
 fun StatusOptionCard(
-    status: Status,
+    text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val text = when (status) {
-        Status.TO_DO -> "To Do"
-        Status.IN_PROGRESS -> "In Progress"
-        Status.DONE -> "Done"
-    }
+
 
     TaskOptionCard(
         isSelected = isSelected,
@@ -59,7 +55,7 @@ private class StatusOptionCardParameterProvider : PreviewParameterProvider<Boole
 @Composable
 private fun StatusOptionCardPreview(@PreviewParameter(StatusOptionCardParameterProvider::class) isSelected: Boolean) {
     StatusOptionCard(
-        status = Status.TO_DO,
+        text = "To Do",
         isSelected = isSelected,
         onClick = { },
     )
