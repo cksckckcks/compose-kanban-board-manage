@@ -37,7 +37,7 @@ import woowacourse.kanban.board.domain.dialog.Status
 @Composable
 fun KanbanCard(
     title: String,
-    crewName: String,
+    crewName: String?,
     modifier: Modifier = Modifier,
     tags: List<String> = emptyList(),
     description: String? = null,
@@ -96,7 +96,9 @@ fun KanbanCard(
 
         HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
 
-        KanbanCardProfile(crewName = crewName)
+        if (crewName != null) {
+            KanbanCardProfile(crewName = crewName)
+        }
     }
 }
 

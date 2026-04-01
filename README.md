@@ -28,8 +28,8 @@
 ## 2단계 기능 목록
 
 ### 도메인
-- [ ] KanbanTask 모델 assignee nullable로 수정
-    - [ ] 담당자 지정 규칙 검사 기능
+- [x] KanbanTask 모델 assignee nullable로 수정
+    - [x] 담당자 지정 규칙 검사 기능
 - [ ] Status 수정
     - [ ] Status에 Review 추가
     - [ ] 이동 가능 여부 판단하는 기능
