@@ -2,7 +2,7 @@ package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
 
-data class KanbanBoard(val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
+data class KanbanBoard(private val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
     private val _projects = projects.toList()
 
     fun getProjectTitles(): List<String> = _projects.map { it.title }
