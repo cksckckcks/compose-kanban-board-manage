@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -15,13 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,111 +21,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.toTitle
 import woowacourse.kanban.board.ui.component.dialog.component.AssigneeOptionCard
+import woowacourse.kanban.board.ui.component.dialog.component.EmptyAssigneeOptionCard
 import woowacourse.kanban.board.ui.component.dialog.component.StatusOptionCard
-import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogCancelButton
-import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogSubmitButton
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogTextField
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogTopAppBar
 import woowacourse.kanban.board.ui.component.dialog.component.TaskFieldLabel
 
 @Composable
 fun TaskDialog(
-    onCreateClick: (KanbanTask) -> Unit,
-    onDismissClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var titleValue by remember { mutableStateOf("") }
-    var isTitleDirty by remember { mutableStateOf(false) }
-    val isTitleError by remember {
-        derivedStateOf {
-            isTitleDirty && !KanbanTask.isTitleValid(titleValue)
-        }
-    }
-
-    var descriptionValue by remember { mutableStateOf("") }
-
-    var tagValue by remember { mutableStateOf("") }
-    val tags by remember {
-        derivedStateOf {
-            tagValue.split(",").map { it.trim() }
-        }
-    }
-    val isTagCountError by remember {
-        derivedStateOf {
-            tagValue.isNotBlank() && !KanbanTask.isTagCountValid(tags)
-        }
-    }
-    val isTagFormatError by remember {
-        derivedStateOf {
-            tagValue.isNotBlank() && !KanbanTask.isTagFormatValid(tags)
-        }
-    }
-
-    val statuses = Status.entries
-    var selectedStatus by remember { mutableStateOf(Status.TO_DO) }
-
-    val assignees = listOf("다이노", "페임스")
-    var selectedAssigneeIndex by remember { mutableIntStateOf(0) }
-
-    val enabled by remember {
-        derivedStateOf {
-            KanbanTask.isTitleValid(titleValue) && !isTagCountError && !isTagFormatError
-        }
-    }
-
-    Dialog(
-        onDismissRequest = onDismissClick,
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-            usePlatformDefaultWidth = false,
-        ),
-    ) {
-        TaskDialogContent(
-            modifier = modifier,
-            titleValue = titleValue,
-            isTitleError = isTitleError,
-            onTitleChanged = {
-                titleValue = it
-                isTitleDirty = true
-            },
-            descriptionValue = descriptionValue,
-            onDescriptionChanged = { descriptionValue = it },
-            tagValue = tagValue,
-            isTagCountError = isTagCountError,
-            isTagFormatError = isTagFormatError,
-            onTagChanged = { tagValue = it },
-            statuses = statuses,
-            selectedStatus = selectedStatus,
-            onStatusChanged = { selectedStatus = it },
-            assignees = assignees,
-            selectedAssigneeIndex = selectedAssigneeIndex,
-            onAssigneeChanged = { selectedAssigneeIndex = it },
-            enabled = enabled,
-            onDismissClick = onDismissClick,
-            onCreateClick = {
-                onCreateClick(
-                    KanbanTask(
-                        title = titleValue,
-                        description = descriptionValue.takeIf { it.isNotBlank() },
-                        tags = if (tagValue.isEmpty()) emptyList() else tags,
-                        status = selectedStatus,
-                        assignee = assignees[selectedAssigneeIndex],
-                    ),
-                )
-            },
-        )
-    }
-}
-
-@Composable
-private fun TaskDialogContent(
+    titleText: String,
     titleValue: String,
     isTitleError: Boolean,
     onTitleChanged: (String) -> Unit,
@@ -147,12 +46,13 @@ private fun TaskDialogContent(
     selectedStatus: Status,
     onStatusChanged: (Status) -> Unit,
     assignees: List<String>,
-    selectedAssigneeIndex: Int,
-    onAssigneeChanged: (Int) -> Unit,
-    enabled: Boolean,
+    isSelectedEmptyAssignee: Boolean,
+    onEmptyAssignee: () -> Unit,
+    selectedAssignee: String,
+    onAssigneeChanged: (String) -> Unit,
     onDismissClick: () -> Unit,
-    onCreateClick: () -> Unit,
     modifier: Modifier = Modifier,
+    buttonContent: @Composable () -> Unit = {},
 ) {
     val isTagError = isTagCountError || isTagFormatError
     val tagErrorMessage = when {
@@ -170,7 +70,7 @@ private fun TaskDialogContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         TaskDialogTopAppBar(
-            title = "새 태스크 생성",
+            title = titleText,
             onClick = onDismissClick,
             modifier = Modifier.padding(bottom = 4.dp),
         )
@@ -206,7 +106,10 @@ private fun TaskDialogContent(
 
         AssigneesSegmentedButtons(
             assignees = assignees,
-            selectedAssigneeIndex = selectedAssigneeIndex,
+            selectedAssignee = selectedAssignee,
+            isAvailableEmptyAssignee = selectedStatus == Status.TO_DO,
+            isSelectedEmptyAssignee = isSelectedEmptyAssignee,
+            onEmptyAssignee = onEmptyAssignee,
             onAssigneeChanged = onAssigneeChanged,
         )
 
@@ -215,22 +118,7 @@ private fun TaskDialogContent(
             thickness = Dp.Hairline,
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TaskDialogCancelButton(
-                text = "취소",
-                onClick = onDismissClick,
-            )
-            Spacer(Modifier.width(12.dp))
-            TaskDialogSubmitButton(
-                text = "생성",
-                onClick = onCreateClick,
-                enabled = enabled,
-            )
-        }
+        buttonContent()
     }
 }
 
@@ -337,7 +225,7 @@ private fun StatusSegmentedButtons(
                     text = status.toTitle(),
                     isSelected = selectedStatus == status,
                     onClick = { onStatusChanged(status) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -347,24 +235,34 @@ private fun StatusSegmentedButtons(
 @Composable
 private fun AssigneesSegmentedButtons(
     assignees: List<String>,
-    selectedAssigneeIndex: Int,
-    onAssigneeChanged: (Int) -> Unit,
+    selectedAssignee: String,
+    isAvailableEmptyAssignee: Boolean,
+    isSelectedEmptyAssignee: Boolean,
+    onEmptyAssignee: () -> Unit,
+    onAssigneeChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TaskLabelLayout(
         label = "담당자",
-        showRequiredMark = true,
+        showRequiredMark = !isAvailableEmptyAssignee,
         modifier = modifier,
     ) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            assignees.forEachIndexed { index, string ->
+            if (isAvailableEmptyAssignee) {
+                EmptyAssigneeOptionCard(
+                    isSelected = isSelectedEmptyAssignee,
+                    onClick = onEmptyAssignee,
+                )
+            }
+
+            assignees.forEach { assignee ->
                 AssigneeOptionCard(
-                    name = string,
-                    isSelected = selectedAssigneeIndex == index,
-                    onClick = { onAssigneeChanged(index) },
+                    name = assignee,
+                    isSelected = !isSelectedEmptyAssignee && selectedAssignee == assignee,
+                    onClick = { onAssigneeChanged(assignee) },
                 )
             }
         }
@@ -394,8 +292,9 @@ private fun TaskLabelLayout(
 
 @Preview
 @Composable
-private fun TaskDialogContentPreview() {
-    TaskDialogContent(
+private fun TaskDialogPreview() {
+    TaskDialog(
+        titleText = "새 태스크 생성",
         titleValue = "",
         isTitleError = false,
         onTitleChanged = {},
@@ -409,10 +308,10 @@ private fun TaskDialogContentPreview() {
         selectedStatus = Status.TO_DO,
         onStatusChanged = {},
         assignees = listOf("다이노", "페임스"),
-        selectedAssigneeIndex = 0,
+        selectedAssignee = "다이노",
         onAssigneeChanged = {},
-        enabled = false,
+        isSelectedEmptyAssignee = false,
+        onEmptyAssignee = {},
         onDismissClick = {},
-        onCreateClick = {},
     )
 }

@@ -16,6 +16,11 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         private set
     var isNewTaskDialog by mutableStateOf(false)
         private set
+    var isEditTaskDialog by mutableStateOf(false)
+        private set
+
+    var editTargetTask by mutableStateOf<KanbanTask?>(null)
+        private set
 
     fun updateSelectedProjectIndex(newIndex: Int) {
         selectedProjectIndex = newIndex
@@ -49,6 +54,18 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
 
     fun hideNewTaskDialog() {
         isNewTaskDialog = false
+    }
+
+    fun showEditTaskDialog() {
+        isEditTaskDialog = true
+    }
+
+    fun hideEditTaskDialog() {
+        isEditTaskDialog = false
+    }
+
+    fun updateEditTargetTask(newTask: KanbanTask) {
+        editTargetTask = newTask
     }
 
     fun getProjectsTitles(): List<String> = _kanbanBoard.getProjectTitles()

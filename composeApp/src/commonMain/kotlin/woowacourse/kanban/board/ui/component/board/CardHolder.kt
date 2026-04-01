@@ -2,6 +2,7 @@ package woowacourse.kanban.board.ui.component.board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ fun CardHolder(
     onTaskDragChange: (Offset) -> Unit = { },
     onTaskDragEnd: () -> Unit = { },
     onTaskDragCancel: () -> Unit = { },
+    onCardClick: (KanbanTask) -> Unit = { },
 ) {
     val isDropTarget by remember {
         derivedStateOf {
@@ -106,6 +108,8 @@ fun CardHolder(
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
                     onDragCancel = onTaskDragCancel,
+                    modifier = Modifier
+                        .clickable(onClick = { onCardClick(card) }),
                 )
             }
         }

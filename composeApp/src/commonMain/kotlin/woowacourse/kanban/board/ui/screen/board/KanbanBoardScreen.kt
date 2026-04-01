@@ -32,7 +32,8 @@ import woowacourse.kanban.board.exception.MoveException
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
-import woowacourse.kanban.board.ui.component.dialog.TaskDialog
+import woowacourse.kanban.board.ui.component.dialog.CreateTaskDialog
+import woowacourse.kanban.board.ui.component.dialog.EditTaskDialog
 
 @Composable
 fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Compose1"))) {
@@ -60,6 +61,7 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
     }
 
     KanbanBoardContent(
+        editTargetTask = kanbanBoardState.editTargetTask,
         projectTitles = kanbanBoardState.getProjectsTitles(),
         projectSelectedIndex = kanbanBoardState.selectedProjectIndex,
         completeCount = completeCount,
@@ -70,8 +72,15 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         onNewTaskClick = {
             kanbanBoardState.showNewTaskDialog()
         },
-        onDismissClick = {
+        onNewTaskDismissClick = {
             kanbanBoardState.hideNewTaskDialog()
+        },
+        onEditTaskClick = {
+            kanbanBoardState.showEditTaskDialog()
+            kanbanBoardState.updateEditTargetTask(it)
+        },
+        onEditTaskDismissClick = {
+            kanbanBoardState.hideEditTaskDialog()
         },
         snackHost = snackBarHostState,
         onCreateClick = {
@@ -94,11 +103,13 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
             }
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
+        isEditTaskDialog = kanbanBoardState.isEditTaskDialog,
     )
 }
 
 @Composable
 private fun KanbanBoardContent(
+    editTargetTask: KanbanTask?,
     projectTitles: List<String>,
     projectSelectedIndex: Int,
     completeCount: Int,
@@ -108,7 +119,10 @@ private fun KanbanBoardContent(
     isNewTaskDialog: Boolean,
     snackHost: SnackbarHostState,
     onNewTaskClick: () -> Unit,
-    onDismissClick: () -> Unit,
+    onNewTaskDismissClick: () -> Unit,
+    isEditTaskDialog: Boolean,
+    onEditTaskClick: (KanbanTask) -> Unit,
+    onEditTaskDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
@@ -181,12 +195,24 @@ private fun KanbanBoardContent(
                         currentDragPosition = null
                         draggedTask = null
                     },
+                    onCardClick = {
+                        onEditTaskClick(it)
+                    },
                 )
             }
             if (isNewTaskDialog) {
-                TaskDialog(
-                    onDismissClick = onDismissClick,
+                CreateTaskDialog(
                     onCreateClick = onCreateClick,
+                    onDismissClick = onNewTaskDismissClick,
+                )
+            }
+
+            if (isEditTaskDialog && editTargetTask != null) {
+                EditTaskDialog(
+                    task = editTargetTask,
+                    onDismissClick = onEditTaskDismissClick,
+                    onEditClick = {},
+                    onDeleteClick = {},
                 )
             }
         }
@@ -197,6 +223,7 @@ private fun KanbanBoardContent(
 @Composable
 private fun KanbanBoardContentPreview() {
     KanbanBoardContent(
+        editTargetTask = null,
         projectTitles = listOf("1", "2"),
         projectSelectedIndex = 0,
         getTasksByStatus = {
@@ -253,8 +280,11 @@ private fun KanbanBoardContentPreview() {
         onNewTaskClick = { },
         onCreateClick = { },
         snackHost = SnackbarHostState(),
-        onDismissClick = { },
+        onNewTaskDismissClick = { },
         updateSelectedProjectIndex = { },
         onMoveTask = { _, _ -> },
+        onEditTaskClick = { },
+        onEditTaskDismissClick = { },
+        isEditTaskDialog = false,
     )
 }
