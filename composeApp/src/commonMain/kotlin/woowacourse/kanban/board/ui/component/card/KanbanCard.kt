@@ -93,10 +93,9 @@ fun KanbanCard(
         if (tags.isNotEmpty()) {
             KanbanCardTags(tags = tags)
         }
-
-        HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
-
         if (crewName != null) {
+            HorizontalDivider(thickness = Dp.Hairline, color = Color.LightGray)
+
             KanbanCardProfile(crewName = crewName)
         }
     }
