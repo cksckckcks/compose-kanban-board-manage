@@ -26,7 +26,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
+import woowacourse.kanban.board.domain.MoveError
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.exception.MoveException
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
@@ -79,8 +81,17 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { task, targetStatus ->
-            kanbanBoardState.moveTask(task, targetStatus)
-            snackBarChannel.trySend("태스크가 이동되었습니다.")
+            try {
+                kanbanBoardState.moveTask(task, targetStatus)
+                snackBarChannel.trySend("태스크가 이동되었습니다.")
+            } catch (e: MoveException) {
+                val message = when (e.status) {
+                    MoveError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
+                    MoveError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
+                }
+
+                snackBarChannel.trySend(message)
+            }
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
     )

@@ -1,6 +1,7 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.exception.MoveException
 
 data class KanbanBoard(private val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
     private val _projects = projects.toList()
@@ -16,6 +17,11 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         task: KanbanTask,
         newStatus: Status,
     ): KanbanBoard {
+        val moveStatus = getMoveStatus(status = task.status, newStatus = newStatus, isAssigned = task.assignee != null)
+
+        if (moveStatus != null)
+            throw MoveException(moveStatus)
+
         val newProject = _projects[projectIndex].changeTaskStatus(task = task, newStatus = newStatus)
 
         return copy(projects = _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project })
@@ -28,5 +34,28 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         val newProject = _projects[projectIndex].addTask(task = task)
 
         return copy(projects = _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project })
+    }
+
+    private fun getMoveStatus(status: Status, newStatus: Status, isAssigned: Boolean): MoveError? = when (status) {
+        Status.TO_DO -> if (newStatus == Status.IN_PROGRESS && !isAssigned)
+            MoveError.UNASSIGNED
+        else if (newStatus != Status.IN_PROGRESS)
+            MoveError.INVALID_STATUS
+        else null
+
+        Status.IN_PROGRESS -> if (newStatus !in listOf(Status.TO_DO, Status.REVIEW))
+            MoveError.INVALID_STATUS
+        else
+            null
+
+        Status.REVIEW -> if (newStatus !in listOf(Status.IN_PROGRESS, Status.DONE))
+            MoveError.INVALID_STATUS
+        else
+            null
+
+        Status.DONE -> if (newStatus != Status.TO_DO)
+            MoveError.INVALID_STATUS
+        else
+            null
     }
 }
