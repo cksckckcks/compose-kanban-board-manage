@@ -14,13 +14,21 @@ data class KanbanProject(
         return copy(tasks = _tasks + task)
     }
 
+    fun deleteTask(taskId: Long): KanbanProject {
+        return copy(tasks = _tasks.filter { it.id != taskId })
+    }
+
+    fun editTask(task: KanbanTask): KanbanProject {
+        return copy(tasks = _tasks.map { if (it.id == task.id) task else it })
+    }
+
     fun changeTaskStatus(
         task: KanbanTask,
         newStatus: Status,
     ): KanbanProject {
         val newTask = task.changeStatus(newStatus = newStatus)
 
-        return copy(tasks = _tasks - task + newTask)
+        return copy(tasks = _tasks.map { if (it.id == task.id) newTask else it })
     }
 
     fun getTasksByStatus(status: Status): List<KanbanTask> = _tasks.filter { it.status == status }

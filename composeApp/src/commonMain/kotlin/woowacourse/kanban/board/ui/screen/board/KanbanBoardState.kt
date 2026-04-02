@@ -36,6 +36,22 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
             )
     }
 
+    fun deleteTask(task: KanbanTask) {
+        _kanbanBoard = _kanbanBoard
+            .deleteTask(
+                projectIndex = selectedProjectIndex,
+                task = task,
+            )
+    }
+
+    fun editTask(task: KanbanTask) {
+        _kanbanBoard = _kanbanBoard
+            .editTask(
+                projectIndex = selectedProjectIndex,
+                task = task,
+            )
+    }
+
     fun moveTask(
         task: KanbanTask,
         targetStatus: Status,

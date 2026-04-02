@@ -23,11 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import woowacourse.kanban.board.domain.DeleteError
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.MoveError
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.exception.DeleteException
 import woowacourse.kanban.board.exception.MoveException
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
@@ -104,6 +106,22 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
         isEditTaskDialog = kanbanBoardState.isEditTaskDialog,
+        onDeleteClick = {
+            try {
+                kanbanBoardState.deleteTask(task = it)
+                snackBarChannel.trySend("태스크가 삭제되었습니다.")
+            } catch (e: DeleteException) {
+                when (e.error) {
+                    DeleteError.FAILED -> snackBarChannel.trySend("해당 상태에서는 태스크 삭제가 불가합니다.")
+                }
+            }
+            kanbanBoardState.hideEditTaskDialog()
+        },
+        onUpdateClick = {
+            kanbanBoardState.editTask(task = it)
+            kanbanBoardState.hideEditTaskDialog()
+            snackBarChannel.trySend("태스크가 수정되었습니다.")
+        },
     )
 }
 
@@ -124,6 +142,8 @@ private fun KanbanBoardContent(
     onEditTaskClick: (KanbanTask) -> Unit,
     onEditTaskDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
+    onUpdateClick: (KanbanTask) -> Unit,
+    onDeleteClick: (KanbanTask) -> Unit,
     onMoveTask: (KanbanTask, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
     getTasksByStatus: (Status) -> List<KanbanTask>,
@@ -211,8 +231,8 @@ private fun KanbanBoardContent(
                 EditTaskDialog(
                     task = editTargetTask,
                     onDismissClick = onEditTaskDismissClick,
-                    onEditClick = {},
-                    onDeleteClick = {},
+                    onEditClick = onUpdateClick,
+                    onDeleteClick = onDeleteClick,
                 )
             }
         }
@@ -286,5 +306,7 @@ private fun KanbanBoardContentPreview() {
         onEditTaskClick = { },
         onEditTaskDismissClick = { },
         isEditTaskDialog = false,
+        onDeleteClick = { },
+        onUpdateClick = { },
     )
 }

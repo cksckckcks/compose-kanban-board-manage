@@ -24,9 +24,9 @@ import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogSubmitBu
 @Composable
 fun EditTaskDialog(
     task: KanbanTask,
-    onEditClick: () -> Unit,
+    onEditClick: (KanbanTask) -> Unit,
     onDismissClick: () -> Unit,
-    onDeleteClick: () -> Unit,
+    onDeleteClick: (KanbanTask) -> Unit,
     modifier: Modifier = Modifier,
     dialogState: TaskDialogState = remember { TaskDialogState() },
 ) {
@@ -78,8 +78,18 @@ fun EditTaskDialog(
             ) {
                 EditTaskButtons(
                     onDismissClick = onDismissClick,
-                    onEditClick = onEditClick,
-                    onDeleteClick = onDeleteClick,
+                    onEditClick = {
+                        val updateTask = task.copy(
+                            title = dialogState.titleValue,
+                            description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
+                            tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
+                            status = dialogState.selectedStatus,
+                            assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
+                        )
+
+                        onEditClick(updateTask)
+                    },
+                    onDeleteClick = { onDeleteClick(task) },
                     enabled = dialogState.enabled,
                 )
             }
@@ -116,9 +126,7 @@ private fun EditTaskButtons(
 
         TaskDialogSubmitButton(
             text = "수정",
-            onClick = {
-                onEditClick()
-            },
+            onClick = onEditClick,
             enabled = enabled,
         )
     }

@@ -72,5 +72,10 @@ class TaskDialogState {
         selectedStatus = task.status
         descriptionValue = task.description ?: ""
         tagValue = task.tags.joinToString(",")
+        if (task.assignee == null) {
+            isSelectedEmptyAssignee = true
+        } else {
+            selectedAssignee = task.assignee
+        }
     }
 }
