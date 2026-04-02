@@ -46,7 +46,7 @@ fun EditTaskDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TaskDialog(
-                titleText = "새 태스크 생성",
+                titleText = "기존 태스크 수정",
                 modifier = modifier,
                 titleValue = dialogState.titleValue,
                 isTitleError = dialogState.isTitleError,
