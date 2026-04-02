@@ -23,9 +23,11 @@ class KanbanBoardScreenTest {
     @Test
     fun `칸반보드 스크린의 카드홀더들이 정상적으로 화면에 표시된다`() = runComposeUiTest {
         setContent {
-            KanbanBoardScreen(
-                projects = listOf(KanbanProject("안녕")),
-            )
+            CompositionLocalProvider(LocalDensity provides Density(0.1f)) {
+                KanbanBoardScreen(
+                    projects = listOf(KanbanProject("안녕")),
+                )
+            }
         }
 
         onNodeWithText("To Do").assertIsDisplayed()
@@ -90,6 +92,7 @@ class KanbanBoardScreenTest {
         }
         onNodeWithText("새 태스크 생성").performClick()
         onNodeWithText("태스크 제목을 입력하세요.").performTextInput("안녕하세요")
+        onNodeWithText("다이노").performClick()
         onNodeWithText("생성").performClick()
         onNodeWithText("새로운 태스크가 추가되었습니다.").assertIsDisplayed()
         onNodeWithContentDescription("닫기").performClick()
@@ -99,7 +102,7 @@ class KanbanBoardScreenTest {
             .fetchSemanticsNode()
             .boundsInRoot
 
-        val doneBounds = onNodeWithText("Done")
+        val doneBounds = onNodeWithText("In Progress")
             .fetchSemanticsNode()
             .boundsInRoot
         onNodeWithText("안녕하세요").performTouchInput {
