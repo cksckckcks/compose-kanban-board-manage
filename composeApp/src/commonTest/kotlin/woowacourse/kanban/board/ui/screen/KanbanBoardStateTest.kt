@@ -6,6 +6,7 @@ import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.exception.DeleteException
 import woowacourse.kanban.board.exception.MoveException
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardState
 import kotlin.test.Test
@@ -132,16 +133,14 @@ class KanbanBoardStateTest {
             status = Status.TO_DO,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
             kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
-
-            // Then
         }
     }
 
@@ -155,16 +154,14 @@ class KanbanBoardStateTest {
             status = Status.TO_DO,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
             kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
-
-            // Then
         }
     }
 
@@ -177,16 +174,14 @@ class KanbanBoardStateTest {
             status = Status.TO_DO,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
             kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
-
-            // Then
         }
     }
 
@@ -246,16 +241,14 @@ class KanbanBoardStateTest {
             status = Status.IN_PROGRESS,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
             kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
-
-            // Then
         }
     }
 
@@ -315,16 +308,14 @@ class KanbanBoardStateTest {
             status = Status.REVIEW,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
             kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
-
-            // Then
         }
     }
 
@@ -384,21 +375,19 @@ class KanbanBoardStateTest {
             status = Status.DONE,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
             kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
-
-            // Then
         }
     }
 
     @Test
-    fun `해당하는 태스크가 삭제된다`() {
+    fun `상태가 ToDo일 때 해당하는 태스크가 삭제된다`() {
         // Given
         val task = KanbanTask(
             id = 1L,
@@ -417,6 +406,70 @@ class KanbanBoardStateTest {
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `상태가 InProgress일 때 해당하는 태스크가 삭제된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.IN_PROGRESS,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.deleteTask(task = task)
+
+        // Then
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `상태가 Review일 때 해당하는 태스크를 삭제시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.REVIEW,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
+        assertThrows(DeleteException::class.java) {
+            kanbanBoardState.deleteTask(task = task)
+        }
+    }
+
+    @Test
+    fun `상태가 Done일 때 해당하는 태스크를 삭제시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.DONE,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When & Then
+        assertThrows(DeleteException::class.java) {
+            kanbanBoardState.deleteTask(task = task)
+        }
     }
 
     @Test
