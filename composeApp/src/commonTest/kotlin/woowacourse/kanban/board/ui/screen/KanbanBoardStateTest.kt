@@ -1,12 +1,14 @@
 package woowacourse.kanban.board.ui.screen
 
-import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertThrows
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.exception.MoveException
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardState
+import kotlin.test.Test
 
 class KanbanBoardStateTest {
     @Test
@@ -98,7 +100,7 @@ class KanbanBoardStateTest {
     }
 
     @Test
-    fun `태스크의 상태가 정상적으로 변경된다`() {
+    fun `태스크의 ToDo에서 InProgress로 상태가 변경된다`() {
         // Given
         val task = KanbanTask(
             id = 1L,
@@ -113,11 +115,335 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
+        kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+
+        // Then
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.IN_PROGRESS).size).isEqualTo(1)
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `태스크의 ToDo에서 Review로 상태로 변경 시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.TO_DO,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `태스크의 ToDo에서 Done으로 변경 시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.TO_DO,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `태스크의 task의 담당자가 없으면 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            status = Status.TO_DO,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `태스크의 InProgress에서 Review로 상태가 변경된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.IN_PROGRESS,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
+
+        // Then
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.REVIEW).size).isEqualTo(1)
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.IN_PROGRESS).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `태스크의 InProgress에서 ToDo로 상태가 변경된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.IN_PROGRESS,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
+
+        // Then
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(1)
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.IN_PROGRESS).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `태스크의 InProgress에서 Done로 상태로 변경 시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.IN_PROGRESS,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `태스크의 Review에서 Done으로 상태가 변경된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.REVIEW,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
         kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.DONE).size).isEqualTo(1)
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.REVIEW).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `태스크의 Review에서 InProgress로 상태가 변경된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.REVIEW,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+
+        // Then
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.IN_PROGRESS).size).isEqualTo(1)
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.REVIEW).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `태스크의 Review에서 ToDo로 상태로 변경 시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.REVIEW,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `태스크의 Done에서 ToDo로 상태가 변경된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.DONE,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
+
+        // Then
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(1)
+        assertThat(kanbanBoardState.getProjectTasksByStatus(Status.DONE).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `태스크의 Done에서 Review로 상태로 변경 시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.DONE,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `태스크의 Done에서 InProgress으로 변경 시 예외가 발생한다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.DONE,
+        )
+
+        assertThrows(MoveException::class.java) {
+            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+            val kanbanBoard = KanbanBoard(projects = projects)
+
+            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+            // When
+            kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+
+            // Then
+        }
+    }
+
+    @Test
+    fun `해당하는 태스크가 삭제된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.TO_DO,
+        )
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.deleteTask(task = task)
+
+        // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(0)
+    }
+
+    @Test
+    fun `해당하는 태스크가 수정된다`() {
+        // Given
+        val task = KanbanTask(
+            id = 1L,
+            title = "안녕",
+            assignee = "볼트",
+            status = Status.TO_DO,
+        )
+        val newTask = task.copy(title = "반가워")
+
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
+        // When
+        kanbanBoardState.editTask(task = newTask)
+
+        // Then
+        assertThat(
+            kanbanBoardState.getProjectTasksByStatus(status = Status.TO_DO)
+                .first()
+                .title,
+        ).isEqualTo("반가워")
     }
 
     @Test
