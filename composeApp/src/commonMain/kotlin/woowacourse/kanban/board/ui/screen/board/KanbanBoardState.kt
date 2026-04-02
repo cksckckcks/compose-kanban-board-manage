@@ -10,8 +10,8 @@ import woowacourse.kanban.board.domain.dialog.Status
 
 class KanbanBoardState(kanbanBoard: KanbanBoard) {
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
-    private val _projects get() = _kanbanBoard.getProjectList()
-    private val selectedProject get() = _projects[selectedProjectIndex]
+    private val projects get() = _kanbanBoard.getProjectList()
+    private val selectedProject get() = projects[selectedProjectIndex]
     var selectedProjectIndex by mutableIntStateOf(0)
         private set
     var isNewTaskDialog by mutableStateOf(false)
