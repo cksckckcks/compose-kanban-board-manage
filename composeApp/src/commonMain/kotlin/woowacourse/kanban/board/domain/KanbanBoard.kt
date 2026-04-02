@@ -59,7 +59,10 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         return copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject))
     }
 
-    private fun copyProjects(projectIndex: Int, newProject: KanbanProject): List<KanbanProject> {
+    private fun copyProjects(
+        projectIndex: Int,
+        newProject: KanbanProject,
+    ): List<KanbanProject> {
         return _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project }
     }
 
@@ -68,7 +71,11 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         Status.REVIEW, Status.DONE -> DeleteError.FAILED
     }
 
-    private fun getMoveStatus(status: Status, newStatus: Status, isAssigned: Boolean): MoveError? = when (status) {
+    private fun getMoveStatus(
+        status: Status,
+        newStatus: Status,
+        isAssigned: Boolean,
+    ): MoveError? = when (status) {
         Status.TO_DO -> if (newStatus == Status.IN_PROGRESS && !isAssigned)
             MoveError.UNASSIGNED
         else if (newStatus != Status.IN_PROGRESS)
