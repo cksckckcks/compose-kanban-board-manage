@@ -10,6 +10,8 @@ data class KanbanProject(
 
     fun getTasks(): List<KanbanTask> = _tasks
 
+    fun getTaskById(taskId: Long): KanbanTask = _tasks.first { it.id == taskId }
+
     fun addTask(task: KanbanTask): KanbanProject {
         return copy(tasks = _tasks + task)
     }

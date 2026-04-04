@@ -53,9 +53,10 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
     }
 
     fun moveTask(
-        task: KanbanTask,
+        taskId: Long,
         targetStatus: Status,
     ) {
+        val task = selectedProject.getTaskById(taskId)
         _kanbanBoard = _kanbanBoard
             .changeTaskStatus(
                 projectIndex = selectedProjectIndex,

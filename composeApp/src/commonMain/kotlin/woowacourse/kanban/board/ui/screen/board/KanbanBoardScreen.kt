@@ -91,9 +91,9 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
             snackBarChannel.trySend("새로운 태스크가 추가되었습니다.")
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
-        onMoveTask = { task, targetStatus ->
+        onMoveTask = { taskId, targetStatus ->
             try {
-                kanbanBoardState.moveTask(task, targetStatus)
+                kanbanBoardState.moveTask(taskId = taskId, targetStatus = targetStatus)
                 snackBarChannel.trySend("태스크가 이동되었습니다.")
             } catch (e: MoveException) {
                 val message = when (e.status) {
@@ -144,7 +144,7 @@ private fun KanbanBoardContent(
     onCreateClick: (KanbanTask) -> Unit,
     onUpdateClick: (KanbanTask) -> Unit,
     onDeleteClick: (KanbanTask) -> Unit,
-    onMoveTask: (KanbanTask, Status) -> Unit,
+    onMoveTask: (Long, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
     getTasksByStatus: (Status) -> List<KanbanTask>,
 ) {
@@ -205,7 +205,7 @@ private fun KanbanBoardContent(
 
                         draggedTask?.let { task ->
                             if (task.status != targetStatus) {
-                                onMoveTask(task, targetStatus ?: return@let)
+                                onMoveTask(task.id, targetStatus ?: return@let)
                             }
                         }
                         currentDragPosition = null
