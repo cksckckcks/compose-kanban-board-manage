@@ -30,9 +30,7 @@ fun EditTaskDialog(
     modifier: Modifier = Modifier,
     dialogState: TaskDialogState = remember { TaskDialogState() },
 ) {
-    LaunchedEffect(dialogState) {
-        dialogState.setTaskData(task)
-    }
+    dialogState.setTaskData(task)
 
     Dialog(
         onDismissRequest = onDismissClick,
