@@ -1,6 +1,8 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.validator.TaskDeleteValidator
+import woowacourse.kanban.board.domain.validator.TaskEditValidator
 import woowacourse.kanban.board.exception.DeleteException
 import woowacourse.kanban.board.exception.MoveException
 
@@ -18,7 +20,11 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         task: KanbanTask,
         newStatus: Status,
     ): KanbanBoard {
-        val moveStatus = validateChangeStatus(status = task.status, newStatus = newStatus, isAssigned = task.assignee != null)
+        val moveStatus = TaskEditValidator.validateEditStatus(
+            status = task.status,
+            newStatus = newStatus,
+            isAssigned = task.assignee != null,
+        )
 
         if (moveStatus != null)
             throw MoveException(moveStatus)
@@ -41,7 +47,7 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         projectIndex: Int,
         task: KanbanTask,
     ): KanbanBoard {
-        val deleteError = validateDelete(task.status)
+        val deleteError = TaskDeleteValidator.validateDelete(task.status)
         if (deleteError != null)
             throw DeleteException(deleteError)
 
@@ -56,10 +62,10 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
     ): KanbanBoard {
         val originalStatus = _projects[projectIndex].getTaskById(taskId = task.id).status
 
-        val editError = validateChangeStatus(
+        val editError = TaskEditValidator.validateEditStatus(
             status = originalStatus,
             newStatus = task.status,
-            isAssigned = task.assignee != null
+            isAssigned = task.assignee != null,
         )
 
         if (editError != null) {
@@ -76,45 +82,5 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         newProject: KanbanProject,
     ): List<KanbanProject> {
         return _projects.mapIndexed { index, project -> if (index == projectIndex) newProject else project }
-    }
-
-    private fun validateDelete(status: Status): DeleteError? = when (status) {
-        Status.TO_DO, Status.IN_PROGRESS -> null
-        Status.REVIEW, Status.DONE -> DeleteError.FAILED
-    }
-
-    private fun validateChangeStatus(
-        status: Status,
-        newStatus: Status,
-        isAssigned: Boolean,
-    ): MoveError? = when (status) {
-        Status.TO_DO -> {
-            if (newStatus == Status.IN_PROGRESS && !isAssigned)
-                MoveError.UNASSIGNED
-            else if (newStatus != Status.IN_PROGRESS)
-                MoveError.INVALID_STATUS
-            else null
-        }
-
-        Status.IN_PROGRESS -> {
-            if (newStatus !in listOf(Status.TO_DO, Status.REVIEW))
-                MoveError.INVALID_STATUS
-            else
-                null
-        }
-
-        Status.REVIEW -> {
-            if (newStatus !in listOf(Status.IN_PROGRESS, Status.DONE))
-                MoveError.INVALID_STATUS
-            else
-                null
-        }
-
-        Status.DONE -> {
-            if (newStatus != Status.TO_DO)
-                MoveError.INVALID_STATUS
-            else
-                null
-        }
     }
 }
