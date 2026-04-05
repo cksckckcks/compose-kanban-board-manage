@@ -352,16 +352,14 @@ class KanbanBoardStateTest {
             status = Status.DONE,
         )
 
+        val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
+        val kanbanBoard = KanbanBoard(projects = projects)
+
+        val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
+
         assertThrows(MoveException::class.java) {
-            val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
-            val kanbanBoard = KanbanBoard(projects = projects)
-
-            val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
-
-            // When
+            //  When & Then
             kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW)
-
-            // Then
         }
     }
 
