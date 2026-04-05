@@ -116,7 +116,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
-        kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+        kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.IN_PROGRESS).size).isEqualTo(1)
@@ -140,7 +140,7 @@ class KanbanBoardStateTest {
 
         // When & Then
         assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW)
         }
     }
 
@@ -161,7 +161,7 @@ class KanbanBoardStateTest {
 
         // When & Then
         assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE)
         }
     }
 
@@ -181,7 +181,7 @@ class KanbanBoardStateTest {
 
         // When & Then
         assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS)
         }
     }
 
@@ -201,7 +201,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
-        kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
+        kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.REVIEW).size).isEqualTo(1)
@@ -224,7 +224,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
-        kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
+        kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.TO_DO)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(1)
@@ -248,7 +248,7 @@ class KanbanBoardStateTest {
 
         // When & Then
         assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE)
         }
     }
 
@@ -268,7 +268,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
-        kanbanBoardState.moveTask(task = task, targetStatus = Status.DONE)
+        kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.DONE).size).isEqualTo(1)
@@ -291,7 +291,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
-        kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+        kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.IN_PROGRESS).size).isEqualTo(1)
@@ -315,7 +315,7 @@ class KanbanBoardStateTest {
 
         // When & Then
         assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.TO_DO)
         }
     }
 
@@ -335,7 +335,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When
-        kanbanBoardState.moveTask(task = task, targetStatus = Status.TO_DO)
+        kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.TO_DO)
 
         // Then
         assertThat(kanbanBoardState.getProjectTasksByStatus(Status.TO_DO).size).isEqualTo(1)
@@ -359,7 +359,7 @@ class KanbanBoardStateTest {
             val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
             // When
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.REVIEW)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW)
 
             // Then
         }
@@ -382,7 +382,7 @@ class KanbanBoardStateTest {
 
         // When & Then
         assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(task = task, targetStatus = Status.IN_PROGRESS)
+            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS)
         }
     }
 
@@ -481,7 +481,7 @@ class KanbanBoardStateTest {
             assignee = "볼트",
             status = Status.TO_DO,
         )
-        val newTask = task.copy(title = "반가워")
+        val newTask = task.copy(title = "반가워", status = Status.IN_PROGRESS)
 
         val projects = listOf(KanbanProject(title = "안녕", tasks = listOf(task)))
         val kanbanBoard = KanbanBoard(projects = projects)
@@ -493,7 +493,7 @@ class KanbanBoardStateTest {
 
         // Then
         assertThat(
-            kanbanBoardState.getProjectTasksByStatus(status = Status.TO_DO)
+            kanbanBoardState.getProjectTasksByStatus(status = Status.IN_PROGRESS)
                 .first()
                 .title,
         ).isEqualTo("반가워")
