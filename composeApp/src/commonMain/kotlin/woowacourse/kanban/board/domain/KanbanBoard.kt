@@ -7,7 +7,7 @@ import woowacourse.kanban.board.exception.DeleteException
 import woowacourse.kanban.board.exception.MoveException
 
 data class KanbanBoard(private val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
-    private val _projects = projects.toList()
+    private val _projects = projects.map { it.copy() }
 
     fun getProjectTitles(): List<String> = _projects.map { it.title }
 

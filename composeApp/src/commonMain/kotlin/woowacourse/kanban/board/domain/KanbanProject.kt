@@ -6,7 +6,7 @@ data class KanbanProject(
     val title: String,
     private val tasks: List<KanbanTask> = emptyList(),
 ) {
-    private val _tasks = tasks.toList()
+    private val _tasks = tasks.map { it.copy() }
 
     fun getTasks(): List<KanbanTask> = _tasks
 
