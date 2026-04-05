@@ -29,27 +29,24 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
     fun getProjectTasksByStatus(status: Status): List<KanbanTask> = selectedProject.getTasksByStatus(status = status)
 
     fun addTask(kanbanTask: KanbanTask) {
-        _kanbanBoard = _kanbanBoard
-            .addTask(
-                projectIndex = selectedProjectIndex,
-                task = kanbanTask,
-            )
+        _kanbanBoard = _kanbanBoard.addTask(
+            projectIndex = selectedProjectIndex,
+            task = kanbanTask,
+        )
     }
 
     fun deleteTask(task: KanbanTask) {
-        _kanbanBoard = _kanbanBoard
-            .deleteTask(
-                projectIndex = selectedProjectIndex,
-                task = task,
-            )
+        _kanbanBoard = _kanbanBoard.deleteTask(
+            projectIndex = selectedProjectIndex,
+            task = task,
+        )
     }
 
     fun editTask(task: KanbanTask) {
-        _kanbanBoard = _kanbanBoard
-            .editTask(
-                projectIndex = selectedProjectIndex,
-                task = task,
-            )
+        _kanbanBoard = _kanbanBoard.editTask(
+            projectIndex = selectedProjectIndex,
+            task = task,
+        )
     }
 
     fun moveTask(
@@ -57,12 +54,11 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         targetStatus: Status,
     ) {
         val task = selectedProject.getTaskById(taskId)
-        _kanbanBoard = _kanbanBoard
-            .changeTaskStatus(
-                projectIndex = selectedProjectIndex,
-                task = task,
-                newStatus = targetStatus,
-            )
+        _kanbanBoard = _kanbanBoard.changeTaskStatus(
+            projectIndex = selectedProjectIndex,
+            task = task,
+            newStatus = targetStatus,
+        )
     }
 
     fun showNewTaskDialog() {
