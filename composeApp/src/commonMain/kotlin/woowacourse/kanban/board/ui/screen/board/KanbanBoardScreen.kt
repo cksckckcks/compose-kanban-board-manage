@@ -118,9 +118,18 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
             kanbanBoardState.hideEditTaskDialog()
         },
         onUpdateClick = {
-            kanbanBoardState.editTask(task = it)
+            try {
+                kanbanBoardState.editTask(task = it)
+                snackBarChannel.trySend("태스크가 수정되었습니다.")
+            } catch (e: MoveException) {
+                val message = when (e.status) {
+                    MoveError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
+                    MoveError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
+                }
+
+                snackBarChannel.trySend(message)
+            }
             kanbanBoardState.hideEditTaskDialog()
-            snackBarChannel.trySend("태스크가 수정되었습니다.")
         },
     )
 }

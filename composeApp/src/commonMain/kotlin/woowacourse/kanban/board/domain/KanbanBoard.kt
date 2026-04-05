@@ -18,7 +18,7 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         task: KanbanTask,
         newStatus: Status,
     ): KanbanBoard {
-        val moveStatus = getMoveStatus(status = task.status, newStatus = newStatus, isAssigned = task.assignee != null)
+        val moveStatus = validateChangeStatus(status = task.status, newStatus = newStatus, isAssigned = task.assignee != null)
 
         if (moveStatus != null)
             throw MoveException(moveStatus)
@@ -54,6 +54,18 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         projectIndex: Int,
         task: KanbanTask,
     ): KanbanBoard {
+        val originalStatus = _projects[projectIndex].getTaskById(taskId = task.id).status
+
+        val editError = validateChangeStatus(
+            status = originalStatus,
+            newStatus = task.status,
+            isAssigned = task.assignee != null
+        )
+
+        if (editError != null) {
+            throw MoveException(editError)
+        }
+
         val newProject = _projects[projectIndex].editTask(task = task)
 
         return copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject))
@@ -71,30 +83,38 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         Status.REVIEW, Status.DONE -> DeleteError.FAILED
     }
 
-    private fun getMoveStatus(
+    private fun validateChangeStatus(
         status: Status,
         newStatus: Status,
         isAssigned: Boolean,
     ): MoveError? = when (status) {
-        Status.TO_DO -> if (newStatus == Status.IN_PROGRESS && !isAssigned)
-            MoveError.UNASSIGNED
-        else if (newStatus != Status.IN_PROGRESS)
-            MoveError.INVALID_STATUS
-        else null
+        Status.TO_DO -> {
+            if (newStatus == Status.IN_PROGRESS && !isAssigned)
+                MoveError.UNASSIGNED
+            else if (newStatus != Status.IN_PROGRESS)
+                MoveError.INVALID_STATUS
+            else null
+        }
 
-        Status.IN_PROGRESS -> if (newStatus !in listOf(Status.TO_DO, Status.REVIEW))
-            MoveError.INVALID_STATUS
-        else
-            null
+        Status.IN_PROGRESS -> {
+            if (newStatus !in listOf(Status.TO_DO, Status.REVIEW))
+                MoveError.INVALID_STATUS
+            else
+                null
+        }
 
-        Status.REVIEW -> if (newStatus !in listOf(Status.IN_PROGRESS, Status.DONE))
-            MoveError.INVALID_STATUS
-        else
-            null
+        Status.REVIEW -> {
+            if (newStatus !in listOf(Status.IN_PROGRESS, Status.DONE))
+                MoveError.INVALID_STATUS
+            else
+                null
+        }
 
-        Status.DONE -> if (newStatus != Status.TO_DO)
-            MoveError.INVALID_STATUS
-        else
-            null
+        Status.DONE -> {
+            if (newStatus != Status.TO_DO)
+                MoveError.INVALID_STATUS
+            else
+                null
+        }
     }
 }
