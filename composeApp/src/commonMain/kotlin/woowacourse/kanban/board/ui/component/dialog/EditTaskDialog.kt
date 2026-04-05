@@ -13,8 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.dialog.component.TaskDialogCancelButton
@@ -28,70 +26,55 @@ fun EditTaskDialog(
     onDismissClick: () -> Unit,
     onDeleteClick: (KanbanTask) -> Unit,
     modifier: Modifier = Modifier,
-    dialogState: TaskDialogState = remember { TaskDialogState() },
+    dialogState: TaskDialogState = remember(task) { TaskDialogState(task) },
 ) {
-    dialogState.setTaskData(task)
-
-    Dialog(
-        onDismissRequest = onDismissClick,
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-            usePlatformDefaultWidth = false,
-        ),
+    TaskDialog(
+        titleText = "기존 태스크 수정",
+        modifier = modifier,
+        titleValue = dialogState.titleValue,
+        isTitleError = dialogState.isTitleError,
+        onTitleChanged = {
+            dialogState.updateTitleValue(it)
+            dialogState.updateTitleDirty()
+        },
+        descriptionValue = dialogState.descriptionValue,
+        onDescriptionChanged = { dialogState.updateDescriptionValue(it) },
+        tagValue = dialogState.tagValue,
+        isTagCountError = dialogState.isTagCountError,
+        isTagFormatError = dialogState.isTagFormatError,
+        onTagChanged = { dialogState.updateTagValue(it) },
+        statuses = Status.entries,
+        selectedStatus = dialogState.selectedStatus,
+        onStatusChanged = {
+            dialogState.updateSelectedStatus(it)
+            dialogState.updateIsSelectedEmptyAssignee(false)
+        },
+        assignees = dialogState.assignees,
+        selectedAssignee = dialogState.selectedAssignee,
+        onAssigneeChanged = {
+            dialogState.updateSelectedAssignee(it)
+            dialogState.updateIsSelectedEmptyAssignee(false)
+        },
+        isSelectedEmptyAssignee = dialogState.isSelectedEmptyAssignee,
+        onEmptyAssignee = { dialogState.updateIsSelectedEmptyAssignee(true) },
+        onDismissClick = onDismissClick,
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TaskDialog(
-                titleText = "기존 태스크 수정",
-                modifier = modifier,
-                titleValue = dialogState.titleValue,
-                isTitleError = dialogState.isTitleError,
-                onTitleChanged = {
-                    dialogState.updateTitleValue(it)
-                    dialogState.updateTitleDirty()
-                },
-                descriptionValue = dialogState.descriptionValue,
-                onDescriptionChanged = { dialogState.updateDescriptionValue(it) },
-                tagValue = dialogState.tagValue,
-                isTagCountError = dialogState.isTagCountError,
-                isTagFormatError = dialogState.isTagFormatError,
-                onTagChanged = { dialogState.updateTagValue(it) },
-                statuses = Status.entries,
-                selectedStatus = dialogState.selectedStatus,
-                onStatusChanged = {
-                    dialogState.updateSelectedStatus(it)
-                    dialogState.updateIsSelectedEmptyAssignee(false)
-                },
-                assignees = dialogState.assignees,
-                selectedAssignee = dialogState.selectedAssignee,
-                onAssigneeChanged = {
-                    dialogState.updateSelectedAssignee(it)
-                    dialogState.updateIsSelectedEmptyAssignee(false)
-                },
-                isSelectedEmptyAssignee = dialogState.isSelectedEmptyAssignee,
-                onEmptyAssignee = { dialogState.updateIsSelectedEmptyAssignee(true) },
-                onDismissClick = onDismissClick,
-            ) {
-                EditTaskButtons(
-                    onDismissClick = onDismissClick,
-                    onEditClick = {
-                        val updateTask = task.copy(
-                            title = dialogState.titleValue,
-                            description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
-                            tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
-                            status = dialogState.selectedStatus,
-                            assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
-                        )
-
-                        onEditClick(updateTask)
-                    },
-                    onDeleteClick = { onDeleteClick(task) },
-                    enabled = dialogState.enabled,
+        EditTaskButtons(
+            onDismissClick = onDismissClick,
+            onEditClick = {
+                val updateTask = task.copy(
+                    title = dialogState.titleValue,
+                    description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
+                    tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
+                    status = dialogState.selectedStatus,
+                    assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
                 )
-            }
-        }
+
+                onEditClick(updateTask)
+            },
+            onDeleteClick = { onDeleteClick(task) },
+            enabled = dialogState.enabled,
+        )
     }
 }
 

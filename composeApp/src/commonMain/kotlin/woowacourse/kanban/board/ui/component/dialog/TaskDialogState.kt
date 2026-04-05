@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 
-class TaskDialogState {
+class TaskDialogState(task: KanbanTask? = null) {
     var titleValue by mutableStateOf("")
         private set
     var isTitleDirty by mutableStateOf(false)
@@ -37,6 +37,12 @@ class TaskDialogState {
         private set
     val enabled by derivedStateOf {
         KanbanTask.isTitleValid(titleValue) && !isTagCountError && !isTagFormatError
+    }
+
+    init {
+        if (task != null) {
+            setTaskData(task)
+        }
     }
 
     fun updateTitleValue(newTitle: String) {

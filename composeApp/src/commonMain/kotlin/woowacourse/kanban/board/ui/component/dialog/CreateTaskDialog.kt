@@ -26,65 +26,52 @@ fun CreateTaskDialog(
     modifier: Modifier = Modifier,
     dialogState: TaskDialogState = remember { TaskDialogState() },
 ) {
-    Dialog(
-        onDismissRequest = onDismissClick,
-        properties = DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-            usePlatformDefaultWidth = false,
-        ),
+    TaskDialog(
+        titleText = "새 태스크 생성",
+        modifier = modifier,
+        titleValue = dialogState.titleValue,
+        isTitleError = dialogState.isTitleError,
+        onTitleChanged = {
+            dialogState.updateTitleValue(it)
+            dialogState.updateTitleDirty()
+        },
+        descriptionValue = dialogState.descriptionValue,
+        onDescriptionChanged = { dialogState.updateDescriptionValue(it) },
+        tagValue = dialogState.tagValue,
+        isTagCountError = dialogState.isTagCountError,
+        isTagFormatError = dialogState.isTagFormatError,
+        onTagChanged = { dialogState.updateTagValue(it) },
+        statuses = Status.entries,
+        selectedStatus = dialogState.selectedStatus,
+        onStatusChanged = {
+            dialogState.updateSelectedStatus(it)
+            dialogState.updateIsSelectedEmptyAssignee(false)
+        },
+        assignees = dialogState.assignees,
+        selectedAssignee = dialogState.selectedAssignee,
+        onAssigneeChanged = {
+            dialogState.updateSelectedAssignee(it)
+            dialogState.updateIsSelectedEmptyAssignee(false)
+        },
+        isSelectedEmptyAssignee = dialogState.isSelectedEmptyAssignee,
+        onEmptyAssignee = { dialogState.updateIsSelectedEmptyAssignee(true) },
+        onDismissClick = onDismissClick,
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            TaskDialog(
-                titleText = "새 태스크 생성",
-                modifier = modifier,
-                titleValue = dialogState.titleValue,
-                isTitleError = dialogState.isTitleError,
-                onTitleChanged = {
-                    dialogState.updateTitleValue(it)
-                    dialogState.updateTitleDirty()
-                },
-                descriptionValue = dialogState.descriptionValue,
-                onDescriptionChanged = { dialogState.updateDescriptionValue(it) },
-                tagValue = dialogState.tagValue,
-                isTagCountError = dialogState.isTagCountError,
-                isTagFormatError = dialogState.isTagFormatError,
-                onTagChanged = { dialogState.updateTagValue(it) },
-                statuses = Status.entries,
-                selectedStatus = dialogState.selectedStatus,
-                onStatusChanged = {
-                    dialogState.updateSelectedStatus(it)
-                    dialogState.updateIsSelectedEmptyAssignee(false)
-                },
-                assignees = dialogState.assignees,
-                selectedAssignee = dialogState.selectedAssignee,
-                onAssigneeChanged = {
-                    dialogState.updateSelectedAssignee(it)
-                    dialogState.updateIsSelectedEmptyAssignee(false)
-                },
-                isSelectedEmptyAssignee = dialogState.isSelectedEmptyAssignee,
-                onEmptyAssignee = { dialogState.updateIsSelectedEmptyAssignee(true) },
-                onDismissClick = onDismissClick,
-            ) {
-                NewTaskButtons(
-                    onDismissClick = onDismissClick,
-                    onCreateClick = {
-                        onCreateClick(
-                            KanbanTask(
-                                title = dialogState.titleValue,
-                                description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
-                                tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
-                                status = dialogState.selectedStatus,
-                                assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
-                            ),
-                        )
-                    },
-                    enabled = dialogState.enabled,
+        NewTaskButtons(
+            onDismissClick = onDismissClick,
+            onCreateClick = {
+                onCreateClick(
+                    KanbanTask(
+                        title = dialogState.titleValue,
+                        description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
+                        tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
+                        status = dialogState.selectedStatus,
+                        assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
+                    ),
                 )
-            }
-        }
+            },
+            enabled = dialogState.enabled,
+        )
     }
 }
 

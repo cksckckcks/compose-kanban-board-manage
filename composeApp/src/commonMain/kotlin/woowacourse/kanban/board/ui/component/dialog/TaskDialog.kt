@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.ui.component.board.toTitle
 import woowacourse.kanban.board.ui.component.dialog.component.AssigneeOptionCard
@@ -60,65 +62,73 @@ fun TaskDialog(
         isTagFormatError -> "태그 형식이 올바르지 않습니다."
         else -> "5자 이내의 태그를 최대 5개까지 등록할 수 있습니다."
     }
-
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.White)
-            .padding(vertical = 28.dp, horizontal = 24.dp)
-            .width(672.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+    Dialog(
+        onDismissRequest = onDismissClick,
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false,
+        ),
     ) {
-        TaskDialogTopAppBar(
-            title = titleText,
-            onClick = onDismissClick,
-            modifier = Modifier.padding(bottom = 4.dp),
-        )
+        Column(
+            modifier = modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+                .padding(vertical = 28.dp, horizontal = 24.dp)
+                .width(672.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            TaskDialogTopAppBar(
+                title = titleText,
+                onClick = onDismissClick,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
 
-        HorizontalDivider(
-            color = Color.Black,
-            thickness = Dp.Hairline,
-        )
+            HorizontalDivider(
+                color = Color.Black,
+                thickness = Dp.Hairline,
+            )
 
-        TitleField(
-            titleValue = titleValue,
-            onTitleChanged = onTitleChanged,
-            isTitleError = isTitleError,
-        )
+            TitleField(
+                titleValue = titleValue,
+                onTitleChanged = onTitleChanged,
+                isTitleError = isTitleError,
+            )
 
-        DescriptionField(
-            descriptionValue = descriptionValue,
-            onDescriptionChanged = onDescriptionChanged,
-        )
+            DescriptionField(
+                descriptionValue = descriptionValue,
+                onDescriptionChanged = onDescriptionChanged,
+            )
 
-        TagField(
-            tagValue = tagValue,
-            onTagChanged = onTagChanged,
-            isTagError = isTagError,
-            tagErrorMessage = tagErrorMessage,
-        )
+            TagField(
+                tagValue = tagValue,
+                onTagChanged = onTagChanged,
+                isTagError = isTagError,
+                tagErrorMessage = tagErrorMessage,
+            )
 
-        StatusSegmentedButtons(
-            statuses = statuses,
-            selectedStatus = selectedStatus,
-            onStatusChanged = onStatusChanged,
-        )
+            StatusSegmentedButtons(
+                statuses = statuses,
+                selectedStatus = selectedStatus,
+                onStatusChanged = onStatusChanged,
+            )
 
-        AssigneesSegmentedButtons(
-            assignees = assignees,
-            selectedAssignee = selectedAssignee,
-            isAvailableEmptyAssignee = selectedStatus == Status.TO_DO,
-            isSelectedEmptyAssignee = isSelectedEmptyAssignee,
-            onEmptyAssignee = onEmptyAssignee,
-            onAssigneeChanged = onAssigneeChanged,
-        )
+            AssigneesSegmentedButtons(
+                assignees = assignees,
+                selectedAssignee = selectedAssignee,
+                isAvailableEmptyAssignee = selectedStatus == Status.TO_DO,
+                isSelectedEmptyAssignee = isSelectedEmptyAssignee,
+                onEmptyAssignee = onEmptyAssignee,
+                onAssigneeChanged = onAssigneeChanged,
+            )
 
-        HorizontalDivider(
-            color = Color.Black,
-            thickness = Dp.Hairline,
-        )
+            HorizontalDivider(
+                color = Color.Black,
+                thickness = Dp.Hairline,
+            )
 
-        buttonContent()
+            buttonContent()
+        }
     }
 }
 
