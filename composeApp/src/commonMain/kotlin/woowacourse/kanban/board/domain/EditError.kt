@@ -1,6 +1,6 @@
 package woowacourse.kanban.board.domain
 
-enum class MoveError {
+enum class EditError {
     UNASSIGNED,
     INVALID_STATUS,
 }

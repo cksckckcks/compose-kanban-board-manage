@@ -2,13 +2,14 @@ package woowacourse.kanban.board.ui.screen
 
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertThrows
+import woowacourse.kanban.board.domain.DeleteError
+import woowacourse.kanban.board.domain.EditError
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.exception.DeleteException
-import woowacourse.kanban.board.exception.MoveException
+import woowacourse.kanban.board.domain.result.DeleteTaskResult
+import woowacourse.kanban.board.domain.result.EditResult
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardState
 
 class KanbanBoardStateTest {
@@ -139,9 +140,8 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW))
+            .isEqualTo(EditResult.Failed(EditError.INVALID_STATUS))
     }
 
     @Test
@@ -160,9 +160,8 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE))
+            .isEqualTo(EditResult.Failed(EditError.INVALID_STATUS))
     }
 
     @Test
@@ -180,9 +179,8 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS))
+            .isEqualTo(EditResult.Failed(EditError.UNASSIGNED))
     }
 
     @Test
@@ -247,9 +245,8 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.DONE))
+            .isEqualTo(EditResult.Failed(EditError.INVALID_STATUS))
     }
 
     @Test
@@ -314,9 +311,8 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.TO_DO)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.TO_DO))
+            .isEqualTo(EditResult.Failed(EditError.INVALID_STATUS))
     }
 
     @Test
@@ -357,10 +353,8 @@ class KanbanBoardStateTest {
 
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
-        assertThrows(MoveException::class.java) {
-            //  When & Then
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.REVIEW))
+            .isEqualTo(EditResult.Failed(EditError.INVALID_STATUS))
     }
 
     @Test
@@ -379,9 +373,8 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(MoveException::class.java) {
-            kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS)
-        }
+        assertThat(kanbanBoardState.moveTask(taskId = task.id, targetStatus = Status.IN_PROGRESS))
+            .isEqualTo(EditResult.Failed(EditError.INVALID_STATUS))
     }
 
     @Test
@@ -444,9 +437,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(DeleteException::class.java) {
-            kanbanBoardState.deleteTask(task = task)
-        }
+       assertThat(kanbanBoardState.deleteTask(task = task)).isEqualTo(DeleteTaskResult.Failed(DeleteError.FAILED))
     }
 
     @Test
@@ -465,9 +456,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-        assertThrows(DeleteException::class.java) {
-            kanbanBoardState.deleteTask(task = task)
-        }
+        assertThat(kanbanBoardState.deleteTask(task = task)).isEqualTo(DeleteTaskResult.Failed(DeleteError.FAILED))
     }
 
     @Test

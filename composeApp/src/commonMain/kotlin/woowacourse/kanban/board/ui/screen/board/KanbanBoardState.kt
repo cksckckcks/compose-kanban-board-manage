@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.result.DeleteTaskResult
+import woowacourse.kanban.board.domain.result.EditResult
 
 class KanbanBoardState(kanbanBoard: KanbanBoard) {
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
@@ -35,30 +37,65 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         )
     }
 
-    fun deleteTask(task: KanbanTask) {
-        _kanbanBoard = _kanbanBoard.deleteTask(
+    fun deleteTask(task: KanbanTask): DeleteTaskResult {
+        val result = _kanbanBoard.deleteTask(
             projectIndex = selectedProjectIndex,
             task = task,
         )
+
+        return when (result) {
+            is DeleteTaskResult.Success -> {
+                _kanbanBoard = result.board
+
+                result
+            }
+            is DeleteTaskResult.Failed -> {
+                result
+            }
+        }
     }
 
-    fun editTask(task: KanbanTask) {
-        _kanbanBoard = _kanbanBoard.editTask(
+    fun editTask(task: KanbanTask): EditResult {
+        val result = _kanbanBoard.editTask(
             projectIndex = selectedProjectIndex,
             task = task,
         )
+
+        println(result)
+
+        return when (result) {
+            is EditResult.Success -> {
+                _kanbanBoard = result.board
+
+                result
+            }
+            is EditResult.Failed -> {
+                result
+            }
+        }
     }
 
     fun moveTask(
         taskId: Long,
         targetStatus: Status,
-    ) {
+    ): EditResult {
         val task = selectedProject.getTaskById(taskId)
-        _kanbanBoard = _kanbanBoard.changeTaskStatus(
+        val result = _kanbanBoard.changeTaskStatus(
             projectIndex = selectedProjectIndex,
             task = task,
             newStatus = targetStatus,
         )
+
+        return when (result) {
+            is EditResult.Success -> {
+                _kanbanBoard = result.board
+
+                result
+            }
+            is EditResult.Failed -> {
+                result
+            }
+        }
     }
 
     fun showNewTaskDialog() {

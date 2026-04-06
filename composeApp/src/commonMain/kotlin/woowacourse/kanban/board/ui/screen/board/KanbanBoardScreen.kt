@@ -23,14 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
-import woowacourse.kanban.board.domain.DeleteError
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
-import woowacourse.kanban.board.domain.MoveError
+import woowacourse.kanban.board.domain.EditError
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.exception.DeleteException
-import woowacourse.kanban.board.exception.MoveException
+import woowacourse.kanban.board.domain.result.EditResult
+import woowacourse.kanban.board.domain.result.DeleteTaskResult
 import woowacourse.kanban.board.ui.component.board.CardGroup
 import woowacourse.kanban.board.ui.component.board.KanbanBoardTopAppBar
 import woowacourse.kanban.board.ui.component.board.sidebar.SideBar
@@ -92,43 +91,36 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         },
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { taskId, targetStatus ->
-            try {
-                kanbanBoardState.moveTask(taskId = taskId, targetStatus = targetStatus)
-                snackBarChannel.trySend("태스크가 이동되었습니다.")
-            } catch (e: MoveException) {
-                val message = when (e.status) {
-                    MoveError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
-                    MoveError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
+            val message = when (val result = kanbanBoardState.moveTask(taskId = taskId, targetStatus = targetStatus)) {
+                is EditResult.Success -> "태스크가 이동되었습니다."
+                is EditResult.Failed -> {
+                    when (result.error) {
+                        EditError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
+                        EditError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
+                    }
                 }
-
-                snackBarChannel.trySend(message)
             }
+
+            snackBarChannel.trySend(message)
         },
         getTasksByStatus = { kanbanBoardState.getProjectTasksByStatus(it) },
         isEditTaskDialog = kanbanBoardState.isEditTaskDialog,
         onDeleteClick = {
-            try {
-                kanbanBoardState.deleteTask(task = it)
-                snackBarChannel.trySend("태스크가 삭제되었습니다.")
-            } catch (e: DeleteException) {
-                when (e.error) {
-                    DeleteError.FAILED -> snackBarChannel.trySend("해당 상태에서는 태스크 삭제가 불가합니다.")
-                }
+            val message = when (kanbanBoardState.deleteTask(task = it)) {
+                is DeleteTaskResult.Success -> "태스크가 삭제되었습니다."
+                is DeleteTaskResult.Failed -> "해당 상태에서는 태스크 삭제가 불가합니다."
             }
+
+            snackBarChannel.trySend(message)
             kanbanBoardState.hideEditTaskDialog()
         },
-        onUpdateClick = {
-            try {
-                kanbanBoardState.editTask(task = it)
-                snackBarChannel.trySend("태스크가 수정되었습니다.")
-            } catch (e: MoveException) {
-                val message = when (e.status) {
-                    MoveError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
-                    MoveError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
-                }
-
-                snackBarChannel.trySend(message)
+        onEditClick = {
+            val message = when (kanbanBoardState.editTask(task = it)) {
+                is EditResult.Success -> "태스크가 수정되었습니다."
+                is EditResult.Failed -> "해당 상태로 옮길 수 없습니다."
             }
+
+            snackBarChannel.trySend(message)
             kanbanBoardState.hideEditTaskDialog()
         },
     )
@@ -151,7 +143,7 @@ private fun KanbanBoardContent(
     onEditTaskClick: (KanbanTask) -> Unit,
     onEditTaskDismissClick: () -> Unit,
     onCreateClick: (KanbanTask) -> Unit,
-    onUpdateClick: (KanbanTask) -> Unit,
+    onEditClick: (KanbanTask) -> Unit,
     onDeleteClick: (KanbanTask) -> Unit,
     onMoveTask: (Long, Status) -> Unit,
     updateSelectedProjectIndex: (Int) -> Unit,
@@ -240,7 +232,7 @@ private fun KanbanBoardContent(
                 EditTaskDialog(
                     task = editTargetTask,
                     onDismissClick = onEditTaskDismissClick,
-                    onEditClick = onUpdateClick,
+                    onEditClick = onEditClick,
                     onDeleteClick = onDeleteClick,
                 )
             }
@@ -316,6 +308,6 @@ private fun KanbanBoardContentPreview() {
         onEditTaskDismissClick = { },
         isEditTaskDialog = false,
         onDeleteClick = { },
-        onUpdateClick = { },
+        onEditClick = { },
     )
 }

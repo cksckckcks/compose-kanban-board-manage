@@ -1,10 +1,10 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.result.DeleteTaskResult
+import woowacourse.kanban.board.domain.result.EditResult
 import woowacourse.kanban.board.domain.validator.TaskDeleteValidator
 import woowacourse.kanban.board.domain.validator.TaskEditValidator
-import woowacourse.kanban.board.exception.DeleteException
-import woowacourse.kanban.board.exception.MoveException
 
 data class KanbanBoard(private val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
     private val _projects = projects.map { it.copy() }
@@ -19,7 +19,7 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         projectIndex: Int,
         task: KanbanTask,
         newStatus: Status,
-    ): KanbanBoard {
+    ): EditResult {
         val moveStatus = TaskEditValidator.validateEditStatus(
             status = task.status,
             newStatus = newStatus,
@@ -27,11 +27,11 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         )
 
         if (moveStatus != null)
-            throw MoveException(moveStatus)
+            return EditResult.Failed(error = moveStatus)
 
         val newProject = _projects[projectIndex].changeTaskStatus(task = task, newStatus = newStatus)
 
-        return copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject))
+        return EditResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
     }
 
     fun addTask(
@@ -46,20 +46,21 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
     fun deleteTask(
         projectIndex: Int,
         task: KanbanTask,
-    ): KanbanBoard {
+    ): DeleteTaskResult {
         val deleteError = TaskDeleteValidator.validateDelete(task.status)
+
         if (deleteError != null)
-            throw DeleteException(deleteError)
+            return DeleteTaskResult.Failed(deleteError)
 
         val newProject = _projects[projectIndex].deleteTask(taskId = task.id)
 
-        return copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject))
+        return DeleteTaskResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
     }
 
     fun editTask(
         projectIndex: Int,
         task: KanbanTask,
-    ): KanbanBoard {
+    ): EditResult {
         val originalStatus = _projects[projectIndex].getTaskById(taskId = task.id).status
 
         val editError = TaskEditValidator.validateEditStatus(
@@ -69,12 +70,12 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         )
 
         if (editError != null) {
-            throw MoveException(editError)
+            return EditResult.Failed(editError)
         }
 
         val newProject = _projects[projectIndex].editTask(task = task)
 
-        return copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject))
+        return EditResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
     }
 
     private fun copyProjects(

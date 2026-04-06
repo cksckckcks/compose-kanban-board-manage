@@ -1,6 +1,6 @@
 package woowacourse.kanban.board.domain.validator
 
-import woowacourse.kanban.board.domain.MoveError
+import woowacourse.kanban.board.domain.EditError
 import woowacourse.kanban.board.domain.dialog.Status
 
 object TaskEditValidator {
@@ -8,32 +8,32 @@ object TaskEditValidator {
         status: Status,
         newStatus: Status,
         isAssigned: Boolean,
-    ): MoveError? = when (status) {
+    ): EditError? = when (status) {
         Status.TO_DO -> {
             when (newStatus) {
-                Status.IN_PROGRESS if !isAssigned -> MoveError.UNASSIGNED
-                !in listOf(Status.TO_DO, Status.IN_PROGRESS) -> MoveError.INVALID_STATUS
+                Status.IN_PROGRESS if !isAssigned -> EditError.UNASSIGNED
+                !in listOf(Status.TO_DO, Status.IN_PROGRESS) -> EditError.INVALID_STATUS
                 else -> null
             }
         }
 
         Status.IN_PROGRESS -> {
             if (newStatus !in listOf(Status.TO_DO, Status.IN_PROGRESS, Status.REVIEW))
-                MoveError.INVALID_STATUS
+                EditError.INVALID_STATUS
             else
                 null
         }
 
         Status.REVIEW -> {
             if (newStatus !in listOf(Status.IN_PROGRESS, Status.REVIEW, Status.DONE))
-                MoveError.INVALID_STATUS
+                EditError.INVALID_STATUS
             else
                 null
         }
 
         Status.DONE -> {
             if (newStatus !in listOf(Status.TO_DO, Status.DONE))
-                MoveError.INVALID_STATUS
+                EditError.INVALID_STATUS
             else
                 null
         }
