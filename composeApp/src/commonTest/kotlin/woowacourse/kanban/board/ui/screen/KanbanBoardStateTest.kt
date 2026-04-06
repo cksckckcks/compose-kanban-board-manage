@@ -8,7 +8,6 @@ import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanProject
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.domain.result.EditResult
 import woowacourse.kanban.board.ui.screen.board.DeleteUiEvent
 import woowacourse.kanban.board.ui.screen.board.EditUiEvent
 import woowacourse.kanban.board.ui.screen.board.KanbanBoardState
@@ -438,7 +437,7 @@ class KanbanBoardStateTest {
         val kanbanBoardState = KanbanBoardState(kanbanBoard = kanbanBoard)
 
         // When & Then
-       assertThat(kanbanBoardState.deleteTask(task = task)).isEqualTo(DeleteUiEvent.Error(DeleteError.FAILED))
+        assertThat(kanbanBoardState.deleteTask(task = task)).isEqualTo(DeleteUiEvent.Error(DeleteError.FAILED))
     }
 
     @Test
