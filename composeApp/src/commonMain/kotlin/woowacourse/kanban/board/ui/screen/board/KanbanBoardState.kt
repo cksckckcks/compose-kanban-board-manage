@@ -37,7 +37,7 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         )
     }
 
-    fun deleteTask(task: KanbanTask): DeleteTaskResult {
+    fun deleteTask(task: KanbanTask): DeleteUiEvent {
         val result = _kanbanBoard.deleteTask(
             projectIndex = selectedProjectIndex,
             task = task,
@@ -47,30 +47,28 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
             is DeleteTaskResult.Success -> {
                 _kanbanBoard = result.board
 
-                result
+                DeleteUiEvent.Success
             }
             is DeleteTaskResult.Failed -> {
-                result
+                DeleteUiEvent.Error(result.error)
             }
         }
     }
 
-    fun editTask(task: KanbanTask): EditResult {
+    fun editTask(task: KanbanTask): EditUiEvent {
         val result = _kanbanBoard.editTask(
             projectIndex = selectedProjectIndex,
             task = task,
         )
 
-        println(result)
-
         return when (result) {
             is EditResult.Success -> {
                 _kanbanBoard = result.board
 
-                result
+                EditUiEvent.Success
             }
             is EditResult.Failed -> {
-                result
+                EditUiEvent.Error(result.error)
             }
         }
     }
@@ -78,7 +76,7 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
     fun moveTask(
         taskId: Long,
         targetStatus: Status,
-    ): EditResult {
+    ): EditUiEvent {
         val task = selectedProject.getTaskById(taskId)
         val result = _kanbanBoard.changeTaskStatus(
             projectIndex = selectedProjectIndex,
@@ -90,10 +88,10 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
             is EditResult.Success -> {
                 _kanbanBoard = result.board
 
-                result
+                EditUiEvent.Success
             }
             is EditResult.Failed -> {
-                result
+                EditUiEvent.Error(result.error)
             }
         }
     }

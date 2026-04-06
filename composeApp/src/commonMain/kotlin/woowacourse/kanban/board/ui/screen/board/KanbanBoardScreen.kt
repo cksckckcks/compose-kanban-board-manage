@@ -92,8 +92,8 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         updateSelectedProjectIndex = { kanbanBoardState.updateSelectedProjectIndex(it) },
         onMoveTask = { taskId, targetStatus ->
             val message = when (val result = kanbanBoardState.moveTask(taskId = taskId, targetStatus = targetStatus)) {
-                is EditResult.Success -> "태스크가 이동되었습니다."
-                is EditResult.Failed -> {
+                is EditUiEvent.Success -> "태스크가 이동되었습니다."
+                is EditUiEvent.Error -> {
                     when (result.error) {
                         EditError.UNASSIGNED -> "담당자를 지정해야 상태를 옮길 수 있습니다."
                         EditError.INVALID_STATUS -> "해당 상태로 옮길 수 없습니다."
@@ -107,8 +107,8 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         isEditTaskDialog = kanbanBoardState.isEditTaskDialog,
         onDeleteClick = {
             val message = when (kanbanBoardState.deleteTask(task = it)) {
-                is DeleteTaskResult.Success -> "태스크가 삭제되었습니다."
-                is DeleteTaskResult.Failed -> "해당 상태에서는 태스크 삭제가 불가합니다."
+                is DeleteUiEvent.Success -> "태스크가 삭제되었습니다."
+                is DeleteUiEvent.Error -> "해당 상태에서는 태스크 삭제가 불가합니다."
             }
 
             snackBarChannel.trySend(message)
@@ -116,8 +116,8 @@ fun KanbanBoardScreen(projects: List<KanbanProject> = listOf(KanbanProject("Comp
         },
         onEditClick = {
             val message = when (kanbanBoardState.editTask(task = it)) {
-                is EditResult.Success -> "태스크가 수정되었습니다."
-                is EditResult.Failed -> "해당 상태로 옮길 수 없습니다."
+                is EditUiEvent.Success -> "태스크가 수정되었습니다."
+                is EditUiEvent.Error -> "해당 상태로 옮길 수 없습니다."
             }
 
             snackBarChannel.trySend(message)
