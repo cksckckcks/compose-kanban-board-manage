@@ -17,7 +17,7 @@ data class KanbanProject(
     }
 
     fun deleteTask(taskId: Long): KanbanProject {
-        return copy(tasks = _tasks.filter { it.id != taskId })
+        return copy(tasks = _tasks.filterNot { it.id == taskId })
     }
 
     fun editTask(task: KanbanTask): KanbanProject {
