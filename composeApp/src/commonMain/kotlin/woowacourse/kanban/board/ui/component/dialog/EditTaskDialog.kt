@@ -60,15 +60,7 @@ fun EditTaskDialog(
         EditTaskButtons(
             onDismissClick = onDismissClick,
             onEditClick = {
-                val updateTask = task.copy(
-                    title = dialogState.titleValue,
-                    description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
-                    tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
-                    status = dialogState.selectedStatus,
-                    assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
-                )
-
-                onEditClick(updateTask)
+                onEditClick(dialogState.updateTask(task))
             },
             onDeleteClick = { onDeleteClick(task) },
             enabled = dialogState.enabled,
