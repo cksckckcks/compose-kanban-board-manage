@@ -23,7 +23,7 @@ data class KanbanTask(
         val error = TaskEditValidator.validateEditStatus(status, newStatus, assignee != null)
 
         if (error != null) {
-            return TaskResult.Failed(EditError.INVALID_STATUS)
+            return TaskResult.Failed(error)
         }
 
         return TaskResult.Success(task = copy(status = newStatus))
