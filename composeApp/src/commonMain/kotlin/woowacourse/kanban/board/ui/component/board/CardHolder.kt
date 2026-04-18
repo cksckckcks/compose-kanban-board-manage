@@ -108,8 +108,7 @@ fun CardHolder(
                     onDragChange = onTaskDragChange,
                     onDragEnd = onTaskDragEnd,
                     onDragCancel = onTaskDragCancel,
-                    modifier = Modifier
-                        .clickable(onClick = { onCardClick(card) }),
+                    onClick = { onCardClick(card) },
                 )
             }
         }
