@@ -1,10 +1,10 @@
 package woowacourse.kanban.board.domain
 
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.result.TaskResult
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class KanbanTaskTest {
     @Test
@@ -154,5 +154,24 @@ class KanbanTaskTest {
 
         // Then
         assertThat(statusUpdateTask.status).isEqualTo(Status.DONE)
+    }
+
+    @Test
+    fun `테스크 수정에 성공한다`() {
+        val task = KanbanTask(
+            title = "안녕하세요~",
+            status = Status.REVIEW,
+            assignee = "볼트",
+        )
+
+        val updateTask = task.copy(
+            title = "수정입니다",
+            status = Status.DONE,
+            assignee = "크롱",
+        )
+
+        val result = task.editTask(newTask = updateTask) as TaskResult.Success
+
+        assertThat(result.task).isEqualTo(updateTask)
     }
 }
