@@ -38,13 +38,12 @@ data class KanbanProject(
         return when (val result = task.changeStatus(newStatus = newStatus)) {
             is TaskResult.Success -> {
                 ProjectResult.Success(
-                    copy(tasks = _tasks.map { if (it.id == task.id) result.task else it })
+                    copy(tasks = _tasks.map { if (it.id == task.id) result.task else it }),
                 )
             }
             is TaskResult.Failed -> {
                 ProjectResult.Failed(result.error)
             }
-
         }
     }
 

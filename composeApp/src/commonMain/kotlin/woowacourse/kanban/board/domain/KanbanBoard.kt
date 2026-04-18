@@ -4,7 +4,6 @@ import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.result.BoardResult
 import woowacourse.kanban.board.domain.result.ProjectResult
 import woowacourse.kanban.board.domain.validator.TaskDeleteValidator
-import woowacourse.kanban.board.domain.validator.TaskEditValidator
 
 data class KanbanBoard(private val projects: List<KanbanProject> = listOf(KanbanProject("기본 프로젝트"))) {
     private val _projects = projects.map { it.copy() }

@@ -161,7 +161,7 @@ private fun KanbanCardPreview(@PreviewParameter(KanbanCardPreviewParameterProvid
             crewName = card.assignee,
             tags = card.tags,
             description = card.description,
-            onClick = {}
+            onClick = {},
         )
     }
 }

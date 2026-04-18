@@ -15,7 +15,6 @@ class KanbanProjectTest {
         val result = kanbanProject.changeTaskStatus(tasks[0], Status.DONE) as ProjectResult.Success
         kanbanProject = result.project
 
-
         // Then
         assertThat(kanbanProject.getCompleteCount()).isEqualTo(1)
     }

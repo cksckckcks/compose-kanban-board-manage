@@ -1,10 +1,10 @@
 package woowacourse.kanban.board.domain.validate
 
+import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.EditError
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.validator.TaskEditValidator
-import kotlin.test.Test
 
 class TaskEditValidatorTest {
     @Test
