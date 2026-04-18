@@ -3,7 +3,7 @@ package woowacourse.kanban.board.domain
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.domain.result.EditResult
+import woowacourse.kanban.board.domain.result.BoardResult
 
 class KanbanBoardTest {
     @Test
@@ -57,7 +57,7 @@ class KanbanBoardTest {
         var kanbanBoard = KanbanBoard(projects = projects)
 
         // When
-        val result = kanbanBoard.changeTaskStatus(projectIndex = 0, task = task, newStatus = Status.IN_PROGRESS) as EditResult.Success
+        val result = kanbanBoard.changeTaskStatus(projectIndex = 0, task = task, newStatus = Status.IN_PROGRESS) as BoardResult.Success
         kanbanBoard = result.board
 
         // Then

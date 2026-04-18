@@ -1,6 +1,8 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.result.TaskResult
+import woowacourse.kanban.board.domain.validator.TaskEditValidator
 
 data class KanbanTask(
     val id: Long = idIndex++,
@@ -17,7 +19,15 @@ data class KanbanTask(
         require(!(status != Status.TO_DO && assignee == null)) { "담당자가 필요한 상태입니다." }
     }
 
-    fun changeStatus(newStatus: Status) = copy(status = newStatus)
+    fun changeStatus(newStatus: Status): TaskResult<EditError> {
+        val error = TaskEditValidator.validateEditStatus(status, newStatus, assignee != null)
+
+        if (error != null) {
+            return TaskResult.Failed(EditError.INVALID_STATUS)
+        }
+
+        return TaskResult.Success(task = copy(status = newStatus))
+    }
 
     companion object {
         private var idIndex = 0L

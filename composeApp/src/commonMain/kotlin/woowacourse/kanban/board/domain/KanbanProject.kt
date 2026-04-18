@@ -1,6 +1,8 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.result.ProjectResult
+import woowacourse.kanban.board.domain.result.TaskResult
 
 data class KanbanProject(
     val title: String,
@@ -27,10 +29,18 @@ data class KanbanProject(
     fun changeTaskStatus(
         task: KanbanTask,
         newStatus: Status,
-    ): KanbanProject {
-        val newTask = task.changeStatus(newStatus = newStatus)
+    ): ProjectResult<EditError> {
+        return when (val result = task.changeStatus(newStatus = newStatus)) {
+            is TaskResult.Success -> {
+                ProjectResult.Success(
+                    copy(tasks = _tasks.map { if (it.id == task.id) result.task else it })
+                )
+            }
+            is TaskResult.Failed -> {
+                ProjectResult.Failed(result.error)
+            }
 
-        return copy(tasks = _tasks.map { if (it.id == task.id) newTask else it })
+        }
     }
 
     fun getTasksByStatus(status: Status): List<KanbanTask> = _tasks.filter { it.status == status }

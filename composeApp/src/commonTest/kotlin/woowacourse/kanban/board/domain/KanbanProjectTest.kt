@@ -3,6 +3,7 @@ package woowacourse.kanban.board.domain
 import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.result.ProjectResult
 
 class KanbanProjectTest {
     @Test
@@ -11,12 +12,12 @@ class KanbanProjectTest {
         var kanbanProject = KanbanProject(title = "안녕", tasks = tasks)
 
         // When
-        kanbanProject = kanbanProject
-            .changeTaskStatus(task = tasks[0], newStatus = Status.DONE)
-            .changeTaskStatus(task = tasks[1], newStatus = Status.DONE)
+        val result = kanbanProject.changeTaskStatus(tasks[0], Status.DONE) as ProjectResult.Success
+        kanbanProject = result.project
+
 
         // Then
-        assertThat(kanbanProject.getCompleteCount()).isEqualTo(2)
+        assertThat(kanbanProject.getCompleteCount()).isEqualTo(1)
     }
 
     @Test
@@ -43,7 +44,8 @@ class KanbanProjectTest {
         var kanbanProject = KanbanProject(title = "크롱", tasks = tasks)
 
         // When
-        kanbanProject = kanbanProject.changeTaskStatus(tasks[0], Status.DONE)
+        val result = kanbanProject.changeTaskStatus(tasks[0], Status.DONE) as ProjectResult.Success
+        kanbanProject = result.project
 
         // Then
         assertThat(kanbanProject.getCompleteRatio()).isEqualTo(1f / 3f)
@@ -55,7 +57,7 @@ class KanbanProjectTest {
             title = "LazyColumn 컴포넌트 구현",
             description = "세로 스크롤 가능한 리스트 컴포넌트를 만들고 성능 최적화를 적용합니다.",
             tags = listOf("컴포넌트", "성능"),
-            status = Status.TO_DO,
+            status = Status.REVIEW,
             assignee = "다이노",
         ),
         KanbanTask(

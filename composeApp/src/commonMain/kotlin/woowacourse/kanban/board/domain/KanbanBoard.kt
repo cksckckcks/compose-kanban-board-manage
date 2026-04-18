@@ -2,7 +2,8 @@ package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.result.DeleteTaskResult
-import woowacourse.kanban.board.domain.result.EditResult
+import woowacourse.kanban.board.domain.result.BoardResult
+import woowacourse.kanban.board.domain.result.ProjectResult
 import woowacourse.kanban.board.domain.validator.TaskDeleteValidator
 import woowacourse.kanban.board.domain.validator.TaskEditValidator
 
@@ -19,19 +20,15 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         projectIndex: Int,
         task: KanbanTask,
         newStatus: Status,
-    ): EditResult {
-        val moveStatus = TaskEditValidator.validateEditStatus(
-            status = task.status,
-            newStatus = newStatus,
-            isAssigned = task.assignee != null,
-        )
-
-        if (moveStatus != null)
-            return EditResult.Failed(error = moveStatus)
-
-        val newProject = _projects[projectIndex].changeTaskStatus(task = task, newStatus = newStatus)
-
-        return EditResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
+    ): BoardResult<EditError> {
+        return when (val result = _projects[projectIndex].changeTaskStatus(task = task, newStatus = newStatus)) {
+            is ProjectResult.Success -> {
+                BoardResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = result.project)))
+            }
+            is ProjectResult.Failed -> {
+                BoardResult.Failed(result.error)
+            }
+        }
     }
 
     fun addTask(
@@ -60,7 +57,7 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
     fun editTask(
         projectIndex: Int,
         task: KanbanTask,
-    ): EditResult {
+    ): BoardResult<EditError> {
         val originalStatus = _projects[projectIndex].getTaskById(taskId = task.id).status
 
         val editError = TaskEditValidator.validateEditStatus(
@@ -70,12 +67,12 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         )
 
         if (editError != null) {
-            return EditResult.Failed(editError)
+            return BoardResult.Failed(editError)
         }
 
         val newProject = _projects[projectIndex].editTask(task = task)
 
-        return EditResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
+        return BoardResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
     }
 
     private fun copyProjects(

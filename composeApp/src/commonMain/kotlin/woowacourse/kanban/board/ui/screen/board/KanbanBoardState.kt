@@ -7,8 +7,8 @@ import androidx.compose.runtime.setValue
 import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
+import woowacourse.kanban.board.domain.result.BoardResult
 import woowacourse.kanban.board.domain.result.DeleteTaskResult
-import woowacourse.kanban.board.domain.result.EditResult
 
 class KanbanBoardState(kanbanBoard: KanbanBoard) {
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
@@ -62,12 +62,12 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         )
 
         return when (result) {
-            is EditResult.Success -> {
+            is BoardResult.Success -> {
                 _kanbanBoard = result.board
 
                 EditUiEvent.Success
             }
-            is EditResult.Failed -> {
+            is BoardResult.Failed -> {
                 EditUiEvent.Error(result.error)
             }
         }
@@ -85,12 +85,12 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         )
 
         return when (result) {
-            is EditResult.Success -> {
+            is BoardResult.Success -> {
                 _kanbanBoard = result.board
 
                 EditUiEvent.Success
             }
-            is EditResult.Failed -> {
+            is BoardResult.Failed -> {
                 EditUiEvent.Error(result.error)
             }
         }
