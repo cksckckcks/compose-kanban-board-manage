@@ -1,9 +1,9 @@
 package woowacourse.kanban.board.domain
 
-import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.result.ProjectResult
+import kotlin.test.Test
 
 class KanbanProjectTest {
     @Test
@@ -48,6 +48,55 @@ class KanbanProjectTest {
 
         // Then
         assertThat(kanbanProject.getCompleteRatio()).isEqualTo(1f / 3f)
+    }
+
+    @Test
+    fun `태스크 리스트를 반환한다`() {
+        val kanbanProject = KanbanProject(title = "크롱", tasks = tasks)
+
+        val projectTasks = kanbanProject.getTasks()
+
+        assertThat(projectTasks).isEqualTo(tasks)
+    }
+
+    @Test
+    fun `특정 ID에 맞는 태스크를 반환한다`() {
+        val kanbanProject = KanbanProject(title = "크롱", tasks = tasks)
+
+        val projectTask = kanbanProject.getTaskById(0L)
+
+        assertThat(projectTask).isEqualTo(tasks[0])
+    }
+
+    @Test
+    fun `테스크가 추가된다`() {
+        val kanbanProject = KanbanProject(title = "크롱", tasks = tasks)
+        val task = KanbanTask(
+            title = "새로운 친구",
+            status = Status.TO_DO,
+        )
+
+        val project = kanbanProject.addTask(task)
+
+        assertThat(project.getTasks().contains(task)).isTrue
+    }
+
+    @Test
+    fun `특정 테스크가 삭제된다`() {
+        val kanbanProject = KanbanProject(title = "크롱", tasks = tasks)
+
+        val project = kanbanProject.deleteTask(0)
+
+        assertThat(project.getTasks().contains(tasks[0])).isFalse
+    }
+
+    @Test
+    fun `특정 상태의 Task를 반환한다`() {
+        val kanbanProject = KanbanProject(title = "크롱", tasks = tasks)
+
+        val statusTasks = kanbanProject.getTasksByStatus(Status.TO_DO)
+
+        assertThat(statusTasks.size).isEqualTo(2)
     }
 
     val tasks = mutableListOf(
