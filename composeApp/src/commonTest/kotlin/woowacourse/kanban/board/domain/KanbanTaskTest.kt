@@ -1,10 +1,10 @@
 package woowacourse.kanban.board.domain
 
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import org.assertj.core.api.Assertions.assertThat
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.result.TaskResult
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
 
 class KanbanTaskTest {
     @Test
