@@ -94,4 +94,14 @@ class TaskDialogState(task: KanbanTask? = null) {
             assignee = if (isSelectedEmptyAssignee) null else selectedAssignee,
         )
     }
+
+    fun createTask(): KanbanTask {
+        return KanbanTask(
+            title = titleValue,
+            description = descriptionValue.takeIf { it.isNotBlank() },
+            tags = if (tagValue.isEmpty()) emptyList() else tags,
+            status = selectedStatus,
+            assignee = if (isSelectedEmptyAssignee) null else selectedAssignee,
+        )
+    }
 }

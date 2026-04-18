@@ -58,13 +58,7 @@ fun CreateTaskDialog(
             onDismissClick = onDismissClick,
             onCreateClick = {
                 onCreateClick(
-                    KanbanTask(
-                        title = dialogState.titleValue,
-                        description = dialogState.descriptionValue.takeIf { it.isNotBlank() },
-                        tags = if (dialogState.tagValue.isEmpty()) emptyList() else dialogState.tags,
-                        status = dialogState.selectedStatus,
-                        assignee = if (dialogState.isSelectedEmptyAssignee) null else dialogState.selectedAssignee,
-                    ),
+                    dialogState.createTask(),
                 )
             },
             enabled = dialogState.enabled,
