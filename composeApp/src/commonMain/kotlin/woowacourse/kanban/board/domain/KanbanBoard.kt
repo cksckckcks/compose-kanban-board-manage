@@ -1,7 +1,6 @@
 package woowacourse.kanban.board.domain
 
 import woowacourse.kanban.board.domain.dialog.Status
-import woowacourse.kanban.board.domain.result.DeleteTaskResult
 import woowacourse.kanban.board.domain.result.BoardResult
 import woowacourse.kanban.board.domain.result.ProjectResult
 import woowacourse.kanban.board.domain.validator.TaskDeleteValidator
@@ -43,15 +42,15 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
     fun deleteTask(
         projectIndex: Int,
         task: KanbanTask,
-    ): DeleteTaskResult {
+    ): BoardResult<DeleteError> {
         val deleteError = TaskDeleteValidator.validateDelete(task.status)
 
         if (deleteError != null)
-            return DeleteTaskResult.Failed(deleteError)
+            return BoardResult.Failed(deleteError)
 
         val newProject = _projects[projectIndex].deleteTask(taskId = task.id)
 
-        return DeleteTaskResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
+        return BoardResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
     }
 
     fun editTask(

@@ -8,7 +8,6 @@ import woowacourse.kanban.board.domain.KanbanBoard
 import woowacourse.kanban.board.domain.KanbanTask
 import woowacourse.kanban.board.domain.dialog.Status
 import woowacourse.kanban.board.domain.result.BoardResult
-import woowacourse.kanban.board.domain.result.DeleteTaskResult
 
 class KanbanBoardState(kanbanBoard: KanbanBoard) {
     private var _kanbanBoard by mutableStateOf(kanbanBoard)
@@ -44,12 +43,12 @@ class KanbanBoardState(kanbanBoard: KanbanBoard) {
         )
 
         return when (result) {
-            is DeleteTaskResult.Success -> {
+            is BoardResult.Success -> {
                 _kanbanBoard = result.board
 
                 DeleteUiEvent.Success
             }
-            is DeleteTaskResult.Failed -> {
+            is BoardResult.Failed -> {
                 DeleteUiEvent.Error(result.error)
             }
         }
