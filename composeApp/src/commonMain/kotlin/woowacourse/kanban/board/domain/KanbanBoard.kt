@@ -24,6 +24,7 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
             is ProjectResult.Success -> {
                 BoardResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = result.project)))
             }
+
             is ProjectResult.Failed -> {
                 BoardResult.Failed(result.error)
             }
@@ -57,21 +58,19 @@ data class KanbanBoard(private val projects: List<KanbanProject> = listOf(Kanban
         projectIndex: Int,
         task: KanbanTask,
     ): BoardResult<EditError> {
-        val originalStatus = _projects[projectIndex].getTaskById(taskId = task.id).status
-
-        val editError = TaskEditValidator.validateEditStatus(
-            status = originalStatus,
-            newStatus = task.status,
-            isAssigned = task.assignee != null,
-        )
-
-        if (editError != null) {
-            return BoardResult.Failed(editError)
+        return when (val result = _projects[projectIndex].editTask(task = task)) {
+            is ProjectResult.Success -> {
+                BoardResult.Success(
+                    copy(
+                        projects = copyProjects(
+                            projectIndex = projectIndex,
+                            newProject = result.project,
+                        ),
+                    ),
+                )
+            }
+            is ProjectResult.Failed -> BoardResult.Failed(result.error)
         }
-
-        val newProject = _projects[projectIndex].editTask(task = task)
-
-        return BoardResult.Success(copy(projects = copyProjects(projectIndex = projectIndex, newProject = newProject)))
     }
 
     private fun copyProjects(

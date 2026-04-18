@@ -22,8 +22,13 @@ data class KanbanProject(
         return copy(tasks = _tasks.filterNot { it.id == taskId })
     }
 
-    fun editTask(task: KanbanTask): KanbanProject {
-        return copy(tasks = _tasks.map { if (it.id == task.id) task else it })
+    fun editTask(task: KanbanTask): ProjectResult<EditError> {
+        val beforeTask = getTaskById(task.id)
+
+        return when (val result = beforeTask.editTask(task)) {
+            is TaskResult.Success -> ProjectResult.Success(copy(tasks = _tasks.map { if (it.id == task.id) result.task else it }))
+            is TaskResult.Failed -> ProjectResult.Failed(result.error)
+        }
     }
 
     fun changeTaskStatus(

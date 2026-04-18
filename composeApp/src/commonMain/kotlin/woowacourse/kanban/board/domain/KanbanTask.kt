@@ -29,6 +29,16 @@ data class KanbanTask(
         return TaskResult.Success(task = copy(status = newStatus))
     }
 
+    fun editTask(newTask: KanbanTask): TaskResult<EditError> {
+        val error = TaskEditValidator.validateEditStatus(status, newTask.status, assignee != null)
+
+        if (error != null) {
+            return TaskResult.Failed(error)
+        }
+
+        return TaskResult.Success(task = newTask)
+    }
+
     companion object {
         private var idIndex = 0L
 
